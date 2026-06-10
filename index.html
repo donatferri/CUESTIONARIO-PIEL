@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#f7f5f0">
+<title>¿Cómo es tu piel? · Test rápido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1D9E75; --green-light: #E1F5EE; --green-mid: #5DCAA5;
+    --green-dark: #085041; --cream: #f7f5f0; --stone: #e8e4dc;
+    --ink: #1a1a18; --ink-soft: #4a4a46; --ink-muted: #8a8a84;
+    --white: #ffffff; --radius: 16px; --radius-sm: 10px;
+  }
+  html { font-size: 16px; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  .site-header { background: var(--white); border-bottom: 1px solid var(--stone); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; }
+  .logo-dot { width: 28px; height: 28px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-dot svg { width: 14px; height: 14px; fill: white; }
+  .header-title { font-size: 13px; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.04em; }
+  .progress-wrap { background: var(--white); padding: 0.9rem 1.25rem; border-bottom: 1px solid var(--stone); }
+  .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-label { font-size: 12px; color: var(--ink-muted); }
+  .progress-count { font-size: 12px; font-weight: 500; color: var(--green); }
+  .progress-track { height: 3px; background: var(--stone); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.35s ease; }
+  main { padding: 1.5rem 1.25rem 6rem; max-width: 540px; margin: 0 auto; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .intro-leaf { width: 56px; height: 56px; background: var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+  .intro-leaf svg { width: 28px; height: 28px; stroke: var(--green); fill: none; stroke-width: 1.5; }
+  .intro-heading { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1.25; color: var(--ink); margin-bottom: 0.75rem; }
+  .intro-sub { font-size: 15px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 1.25rem; }
+  .intro-note { background: var(--green-light); border-left: 3px solid var(--green-mid); padding: 10px 14px; font-size: 13px; color: var(--green-dark); line-height: 1.6; margin-bottom: 1.75rem; }
+  .name-label { font-size: 13px; font-weight: 500; color: var(--ink-soft); margin-bottom: 6px; display: block; }
+  .name-input { width: 100%; padding: 13px 16px; border: 1px solid var(--stone); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink); background: var(--white); outline: none; transition: border-color 0.15s; margin-bottom: 1.5rem; -webkit-appearance: none; }
+  .name-input:focus { border-color: var(--green); }
+  .name-input::placeholder { color: var(--ink-muted); }
+  .q-number { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.06em; margin-bottom: 0.6rem; }
+  .q-text { font-family: 'DM Serif Display', serif; font-size: 22px; line-height: 1.35; color: var(--ink); margin-bottom: 1.5rem; }
+  .q-multi-hint { font-size: 12px; color: var(--green); font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.02em; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: var(--white); border: 1.5px solid var(--stone); border-radius: var(--radius-sm); cursor: pointer; transition: border-color 0.15s, background 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .option:active { transform: scale(0.985); }
+  .option.selected { border-color: var(--green); background: var(--green-light); }
+  .opt-letter { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--stone); background: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: var(--ink-muted); transition: all 0.15s; }
+  .option.selected .opt-letter { background: var(--green); border-color: var(--green); color: white; }
+  .opt-text { font-size: 15px; color: var(--ink); line-height: 1.45; padding-top: 4px; }
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; background: var(--white); border-top: 1px solid var(--stone); padding: 0.9rem 1.25rem; display: flex; gap: 10px; max-width: 540px; }
+  .btn-back { padding: 13px 20px; border: 1.5px solid var(--stone); border-radius: var(--radius-sm); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .btn-next { flex: 1; padding: 14px 20px; background: var(--green); border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: white; cursor: pointer; transition: opacity 0.15s; -webkit-tap-highlight-color: transparent; }
+  .btn-next:disabled { opacity: 0.3; cursor: default; }
+  /* THANK YOU SCREEN */
+  .thankyou-icon { width: 72px; height: 72px; background: var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+  .thankyou-icon svg { width: 36px; height: 36px; stroke: var(--green); }
+  .thankyou-heading { font-family: 'DM Serif Display', serif; font-size: 26px; line-height: 1.25; color: var(--ink); text-align: center; margin-bottom: 1.25rem; }
+  .thankyou-body { font-size: 16px; color: var(--ink-soft); line-height: 1.7; text-align: center; margin-bottom: 0.75rem; }
+  .btn-restart { width: 100%; padding: 14px; background: transparent; border: 1.5px solid var(--stone); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; margin-top: 2rem; margin-bottom: 2rem; -webkit-tap-highlight-color: transparent; }
+  /* SAVING INDICATOR */
+  .saving-badge { display: none; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-muted); margin-top: 0.75rem; }
+  .saving-badge.show { display: flex; }
+  .saving-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* SETUP BANNER — solo visible cuando no hay script configurado */
+  .setup-banner { background: #FFF8E6; border: 1px solid #F0D080; border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: #7A5800; line-height: 1.6; margin-bottom: 1rem; display: none; }
+  .setup-banner strong { display: block; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-dot">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 5 7 5 12c0 4.5 3 8 7 8s7-3.5 7-8c0-5-1.5-10-7-10z"/></svg>
+  </div>
+  <span class="header-title">Test de piel · RINGANA</span>
+</header>
+
+<div class="progress-wrap" id="progress-wrap" style="display:none">
+  <div class="progress-meta">
+    <span class="progress-label" id="prog-label">Pregunta 1 de 10</span>
+    <span class="progress-count" id="prog-count">10%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:10%"></div></div>
+</div>
+
+<main>
+  <!-- INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-leaf">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 5 7 5 12c0 4.5 3 8 7 8s7-3.5 7-8c0-5-1.5-10-7-10z"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="9" y1="16" x2="7" y2="18"/><line x1="15" y1="16" x2="17" y2="18"/></svg>
+    </div>
+    <h1 class="intro-heading">¿Cómo es tu piel?</h1>
+    <p class="intro-sub">Responde estas 10 preguntas rápidas y te preparo algo pensado especialmente para ti para el taller 🌿</p>
+    <div class="intro-note">Si tienes algún problema de piel serio o estás con tratamiento dermatológico, no te preocupes — ya hablamos el día del taller.</div>
+    <label class="name-label" for="name-input">¿Cómo te llamas?</label>
+    <input class="name-input" id="name-input" type="text" placeholder="Tu nombre" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="bottom-nav">
+      <button class="btn-next" style="flex:1" id="btn-start" disabled onclick="startQuiz()">Empezar →</button>
+    </div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div class="screen" id="screen-quiz">
+    <div id="q-number" class="q-number"></div>
+    <div id="q-text" class="q-text"></div>
+    <div id="q-multi-hint" class="q-multi-hint" style="display:none">Puedes elegir varias opciones</div>
+    <div class="options" id="q-options"></div>
+    <div class="bottom-nav" id="quiz-nav">
+      <button class="btn-back" id="btn-back" onclick="prevQ()">←</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- THANK YOU -->
+  <div class="screen" id="screen-result">
+    <div class="thankyou-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 2C6.5 2 5 7 5 12c0 4.5 3 8 7 8s7-3.5 7-8c0-5-1.5-10-7-10z" stroke="currentColor"/><line x1="12" y1="20" x2="12" y2="22" stroke="currentColor"/><line x1="9" y1="16" x2="7" y2="18" stroke="currentColor"/><line x1="15" y1="16" x2="17" y2="18" stroke="currentColor"/></svg>
+    </div>
+    <h2 class="thankyou-heading">¡Muchas gracias, <span id="thankyou-name"></span>!</h2>
+    <p class="thankyou-body">Tus respuestas han quedado guardadas correctamente.</p>
+    <p class="thankyou-body">En el taller descubriremos juntas cuál es tu tipo de piel y te daré recomendaciones de productos adaptadas a ti. ¡Nos vemos pronto! 💚</p>
+
+    <!-- Indicador de guardado -->
+    <div class="saving-badge" id="saving-badge">
+      <div class="saving-dot"></div>
+      <span id="saving-text">Guardando respuestas...</span>
+    </div>
+
+    <!-- Banner de aviso si el script no está configurado -->
+    <div class="setup-banner" id="setup-banner">
+      <strong>⚙️ Base de datos no configurada</strong>
+      Tus respuestas se han procesado correctamente, pero aún no se están guardando en Google Sheets. Sigue las instrucciones del documento para activarlo.
+    </div>
+
+    <button class="btn-restart" onclick="restart()">↩ Volver al inicio</button>
+  </div>
+</main>
+
+<script>
+// ============================================================
+// 🔧 CONFIGURACIÓN — PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
+// Sigue las instrucciones del documento para obtenerla.
+// Mientras esté vacía, el cuestionario funciona igual pero
+// las respuestas NO se guardan en Google Sheets.
+// ============================================================
+const SHEET_URL = '';
+// Ejemplo: const SHEET_URL = 'https://script.google.com/macros/s/XXXX/exec';
+// ============================================================
+
+const QUESTIONS = [
+  { id: 'morning', text: 'Una hora después de lavarte la cara por la mañana (sin poner nada), ¿cómo notas la piel?', type: 'single', options: [
+    { l: 'A', t: 'Tirante, apretada o algo áspera' },
+    { l: 'B', t: 'Brillante o con grasa, especialmente en la frente y nariz' },
+    { l: 'C', t: 'La frente y nariz con algo de brillo, pero las mejillas normales o secas' },
+    { l: 'D', t: 'Normal, ni seca ni grasa' },
+    { l: 'E', t: 'Un poco rara, difícil de describir' },
+  ]},
+  { id: 'shine', text: '¿Con qué frecuencia brillas en frente, nariz o barbilla durante el día?', type: 'single', options: [
+    { l: 'A', t: 'Casi nunca, más bien me veo apagada' },
+    { l: 'B', t: 'A menudo, me toco o me empolvoco varias veces' },
+    { l: 'C', t: 'Solo en la zona central, las mejillas no tanto' },
+    { l: 'D', t: 'A veces, depende del día o la época del año' },
+  ]},
+  { id: 'tight', text: '¿Sientes a menudo que la piel tira, está deshidratada o le falta agua?', type: 'single', options: [
+    { l: 'A', t: 'Sí, bastante a menudo' },
+    { l: 'B', t: 'No, más bien al contrario' },
+    { l: 'C', t: 'A veces, sobre todo en invierno o con aire acondicionado' },
+    { l: 'D', t: 'Muy rara vez' },
+  ]},
+  { id: 'reaction', text: '¿Cómo reacciona tu piel cuando usas una crema o producto nuevo?', type: 'single', options: [
+    { l: 'A', t: 'Suele aguantar bien casi todo' },
+    { l: 'B', t: 'A veces me pica, me enrojece o me salen granitos' },
+    { l: 'C', t: 'Depende mucho del producto' },
+    { l: 'D', t: 'Bastante reactiva, tengo que tener mucho cuidado' },
+  ]},
+  { id: 'concerns', text: '¿Qué te molesta más de tu piel ahora mismo?', type: 'multi', options: [
+    { l: 'A', t: 'Brillos o poros visibles' },
+    { l: 'B', t: 'Granitos o imperfecciones' },
+    { l: 'C', t: 'Sequedad o tirantez' },
+    { l: 'D', t: 'Rojeces o irritación' },
+    { l: 'E', t: 'Manchas o falta de luminosidad' },
+    { l: 'F', t: 'Arrugas o líneas de expresión' },
+    { l: 'G', t: 'Textura irregular o piel apagada' },
+    { l: 'H', t: 'Ojeras o bolsas' },
+    { l: 'I', t: 'No me quejo, la tengo bastante bien 😊' },
+  ]},
+  { id: 'pores', text: '¿Cómo describirías el tamaño de tus poros?', type: 'single', options: [
+    { l: 'A', t: 'Muy pequeños, casi no se ven' },
+    { l: 'B', t: 'Bastante visibles, sobre todo nariz y mejillas' },
+    { l: 'C', t: 'Solo se notan en la zona T (frente y nariz)' },
+    { l: 'D', t: 'Más o menos normales' },
+  ]},
+  { id: 'spots', text: '¿Con qué frecuencia te salen granitos o imperfecciones?', type: 'single', options: [
+    { l: 'A', t: 'Rara vez o nunca' },
+    { l: 'B', t: 'De vez en cuando, en ciertas épocas' },
+    { l: 'C', t: 'Con bastante frecuencia' },
+    { l: 'D', t: 'Solo antes del ciclo o con mucho estrés' },
+  ]},
+  { id: 'endofday', text: 'Al final del día (antes de desmaquillarte o sin maquillaje), ¿cómo tienes la piel?', type: 'single', options: [
+    { l: 'A', t: 'Bastante brillante, con exceso de grasa' },
+    { l: 'B', t: 'Tirante o reseca' },
+    { l: 'C', t: 'Zona T algo grasa y mejillas normales o secas' },
+    { l: 'D', t: 'Sin grandes cambios respecto a la mañana' },
+  ]},
+  { id: 'moisturizer', text: '¿Usas crema hidratante habitualmente?', type: 'single', options: [
+    { l: 'A', t: 'Sí, todos los días (mañana y/o noche)' },
+    { l: 'B', t: 'A veces, cuando noto que me hace falta' },
+    { l: 'C', t: 'Casi nunca, no me gusta la sensación pesada' },
+    { l: 'D', t: 'Solo sérum o contorno de ojos, hidratante poco' },
+  ]},
+  { id: 'age', text: '¿Cuántos años tienes aproximadamente?', type: 'single', options: [
+    { l: 'A', t: 'Menos de 25 años' },
+    { l: 'B', t: 'Entre 25 y 35 años' },
+    { l: 'C', t: 'Entre 35 y 45 años' },
+    { l: 'D', t: 'Más de 45 años' },
+  ]},
+];
+
+const CONCERN_MAP = { A:'Brillos / poros', B:'Granitos / imperfecciones', C:'Sequedad / tirantez', D:'Rojeces / sensibilidad', E:'Manchas / luminosidad', F:'Arrugas / expresión', G:'Textura irregular', H:'Ojeras / bolsas' };
+
+let current = 0, answers = {}, userName = '';
+
+document.getElementById('name-input').addEventListener('input', function() {
+  document.getElementById('btn-start').disabled = this.value.trim().length < 2;
+});
+document.getElementById('name-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim().length >= 2) startQuiz();
+});
+
+function startQuiz() {
+  userName = document.getElementById('name-input').value.trim();
+  document.getElementById('screen-intro').classList.remove('active');
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('screen-quiz').classList.add('active');
+  renderQ();
+}
+
+function renderQ() {
+  const q = QUESTIONS[current];
+  const sel = answers[q.id] || (q.type === 'multi' ? [] : null);
+  const pct = Math.round(((current + 1) / QUESTIONS.length) * 100);
+  document.getElementById('prog-label').textContent = 'Pregunta ' + (current + 1) + ' de ' + QUESTIONS.length;
+  document.getElementById('prog-count').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('q-number').textContent = 'PREGUNTA ' + (current + 1);
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-multi-hint').style.display = q.type === 'multi' ? 'block' : 'none';
+  const btnBack = document.getElementById('btn-back');
+  btnBack.style.display = current === 0 ? 'none' : 'block';
+  const btnNext = document.getElementById('btn-next');
+  btnNext.textContent = current === QUESTIONS.length - 1 ? 'Ver mi resultado →' : 'Siguiente →';
+  btnNext.disabled = q.type === 'multi' ? (sel.length === 0) : !sel;
+  const opts = document.getElementById('q-options');
+  opts.innerHTML = '';
+  q.options.forEach(opt => {
+    const isSelected = q.type === 'multi' ? sel.includes(opt.l) : sel === opt.l;
+    const div = document.createElement('div');
+    div.className = 'option' + (isSelected ? ' selected' : '');
+    div.innerHTML = '<div class="opt-letter">' + opt.l + '</div><div class="opt-text">' + opt.t + '</div>';
+    div.addEventListener('click', () => {
+      if (q.type === 'multi') {
+        let cur = [...(answers[q.id] || [])];
+        if (opt.l === 'I') { cur = cur.includes('I') ? [] : ['I']; }
+        else { cur = cur.filter(x => x !== 'I'); const idx = cur.indexOf(opt.l); idx >= 0 ? cur.splice(idx,1) : cur.push(opt.l); }
+        answers[q.id] = cur;
+      } else { answers[q.id] = opt.l; }
+      renderQ();
+    });
+    opts.appendChild(div);
+  });
+}
+
+function nextQ() {
+  if (current < QUESTIONS.length - 1) { current++; renderQ(); window.scrollTo(0,0); }
+  else showResult();
+}
+function prevQ() {
+  if (current > 0) { current--; renderQ(); window.scrollTo(0,0); }
+}
+
+function getSkinType(a) {
+  let s = { dry:0, oily:0, mixed:0, sensitive:0, normal:0 };
+  if (a.morning==='A') s.dry+=2; if (a.morning==='B') s.oily+=2;
+  if (a.morning==='C') s.mixed+=2; if (a.morning==='D') s.normal+=2; if (a.morning==='E') s.dry+=1;
+  if (a.shine==='A') s.dry+=1; if (a.shine==='B') s.oily+=2; if (a.shine==='C') s.mixed+=2;
+  if (a.tight==='A') s.dry+=2; if (a.tight==='B') s.oily+=1; if (a.tight==='C') { s.dry+=1; s.mixed+=1; }
+  if (a.reaction==='B'||a.reaction==='D') s.sensitive+=3; if (a.reaction==='A') s.normal+=1;
+  if (a.pores==='A') s.dry+=1; if (a.pores==='B') s.oily+=2; if (a.pores==='C') s.mixed+=2;
+  if (a.endofday==='A') s.oily+=2; if (a.endofday==='B') s.dry+=2;
+  if (a.endofday==='C') s.mixed+=2; if (a.endofday==='D') s.normal+=1;
+  const dehydrated = (a.tight==='A'||a.tight==='C') && (a.shine==='B'||a.morning==='B'||a.morning==='C');
+  const isSensitive = s.sensitive >= 3;
+  let main = ['dry','oily','mixed','normal'].reduce((a,b) => s[a]>=s[b] ? a : b);
+  if (s[main]===0) main='normal';
+  return { main, isSensitive, dehydrated };
+}
+function skinLabel(t) { return {dry:'Piel seca',oily:'Piel grasa',mixed:'Piel mixta',normal:'Piel normal'}[t]||'Piel normal'; }
+function skinDesc(t, isSensitive, dehydrated) {
+  const base = {
+    dry: 'Tu piel tiende a ser seca: nota tirantez con facilidad, brilla poco y los poros son pequeños. Necesita hidratación y nutrición constante.',
+    oily: 'Tu piel tiene tendencia grasa: brilla con frecuencia, los poros son más visibles y pueden aparecer imperfecciones. El truco está en equilibrar sin resecar.',
+    mixed: 'Tu piel es mixta: la zona T (frente, nariz, barbilla) tiende al brillo, mientras que las mejillas están más normales o algo secas. ¡Muy común!',
+    normal: 'Tu piel es bastante equilibrada: sin grandes brillos ni sequedad, y reacciona bien a la mayoría de productos. El objetivo es mantener ese equilibrio.',
+  }[t]||'';
+  let extra = '';
+  if (isSensitive) extra += ' Además, tu piel es reactiva o sensible — conviene priorizar fórmulas suaves y presentar los productos nuevos poco a poco.';
+  if (dehydrated) extra += ' También puede que tu piel esté deshidratada (le falta agua aunque no le falte grasa), algo muy habitual que muchas veces no relacionamos con la hidratación.';
+  return base + extra;
+}
+function buildWA(a, name) {
+  const { main, isSensitive, dehydrated } = getSkinType(a);
+  const concerns = Array.isArray(a.concerns) ? a.concerns.filter(c=>c!=='I').map(c=>CONCERN_MAP[c]) : [];
+  let skinPhrase = skinLabel(main).toLowerCase();
+  if (isSensitive) skinPhrase += ' y sensible';
+  if (dehydrated) skinPhrase += ', con tendencia a deshidratarse';
+  let text = 'Hola ' + name + '! 🌿\n\nHe leído tus respuestas y me parece que tienes una ' + skinPhrase + '.';
+  if (concerns.length) text += '\n\nLas cosas que más te preocupan son: ' + concerns.join(', ') + '.';
+  text += '\n\nPara el taller tengo algo pensado para ti';
+  if (main==='dry') text += ' — ya verás que la sensación de tirantez puede mejorar mucho con la hidratación adecuada';
+  if (main==='oily') text += ' — hay opciones que equilibran sin resecar ni tapar los poros';
+  if (main==='mixed') text += ' — hay cosas que funcionan muy bien para pieles como la tuya sin necesitar mil productos';
+  if (main==='normal') text += ' — con una piel así el objetivo es mimar y mantener ese equilibrio';
+  text += '.\n\n¡Nos vemos pronto! 💚';
+  return text;
+}
+
+function saveToSheet(data) {
+  if (!SHEET_URL) {
+    document.getElementById('setup-banner').style.display = 'block';
+    return;
+  }
+  const badge = document.getElementById('saving-badge');
+  const badgeText = document.getElementById('saving-text');
+  badge.classList.add('show');
+  badgeText.textContent = 'Guardando respuestas...';
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    badgeText.textContent = '✓ Guardado correctamente';
+    setTimeout(() => badge.classList.remove('show'), 3000);
+  }).catch(() => {
+    badgeText.textContent = '⚠ No se pudo guardar';
+    setTimeout(() => badge.classList.remove('show'), 3000);
+  });
+}
+
+function showResult() {
+  document.getElementById('screen-quiz').classList.remove('active');
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('screen-result').classList.add('active');
+  window.scrollTo(0,0);
+
+  // Mostrar nombre en el mensaje de agradecimiento
+  document.getElementById('thankyou-name').textContent = userName;
+
+  // Calcular tipo de piel internamente (no se muestra, se guarda en Sheets)
+  const skinResult = getSkinType(answers);
+
+  // Guardar en Google Sheets
+  saveToSheet({
+    timestamp: new Date().toLocaleString('es-ES'),
+    nombre: userName,
+    tipo_piel: skinLabel(skinResult.main),
+    sensible: skinResult.isSensitive ? 'Sí' : 'No',
+    deshidratada: skinResult.dehydrated ? 'Sí' : 'No',
+    preocupaciones: (answers.concerns||[]).filter(c=>c!=='I').map(c=>CONCERN_MAP[c]).join(', ') || '—',
+    resp_manana: answers.morning||'',
+    resp_brillo: answers.shine||'',
+    resp_tirantez: answers.tight||'',
+    resp_reaccion: answers.reaction||'',
+    resp_poros: answers.pores||'',
+    resp_granitos: answers.spots||'',
+    resp_final_dia: answers.endofday||'',
+    resp_hidratante: answers.moisturizer||'',
+    resp_edad: answers.age||''
+  });
+}
+
+function restart() {
+  current=0; answers={}; userName='';
+  document.getElementById('screen-result').classList.remove('active');
+  document.getElementById('setup-banner').style.display='none';
+  document.getElementById('name-input').value='';
+  document.getElementById('btn-start').disabled=true;
+  document.getElementById('screen-intro').classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
