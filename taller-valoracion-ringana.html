@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#f7f5f0">
+<title>Valoración del taller · RINGANA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1D9E75; --green-light: #E1F5EE; --green-mid: #5DCAA5;
+    --green-dark: #085041; --cream: #f7f5f0; --stone: #e8e4dc;
+    --ink: #1a1a18; --ink-soft: #4a4a46; --ink-muted: #8a8a84;
+    --white: #ffffff; --radius: 16px; --radius-sm: 10px;
+    --amber: #F59E0B; --amber-light: #FEF3C7;
+  }
+  html { font-size: 16px; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  /* HEADER */
+  .site-header { background: var(--white); border-bottom: 1px solid var(--stone); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; }
+  .logo-dot { width: 28px; height: 28px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-dot svg { width: 14px; height: 14px; fill: white; }
+  .header-title { font-size: 13px; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.04em; }
+
+  /* PROGRESS */
+  .progress-wrap { background: var(--white); padding: 0.9rem 1.25rem; border-bottom: 1px solid var(--stone); display: none; }
+  .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-label { font-size: 12px; color: var(--ink-muted); }
+  .progress-count { font-size: 12px; font-weight: 500; color: var(--green); }
+  .progress-track { height: 3px; background: var(--stone); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.35s ease; }
+
+  /* MAIN */
+  main { padding: 1.5rem 1.25rem 6rem; max-width: 540px; margin: 0 auto; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* INTRO */
+  .intro-leaf { width: 56px; height: 56px; background: var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+  .intro-leaf svg { width: 28px; height: 28px; stroke: var(--green); fill: none; stroke-width: 1.5; }
+  .intro-heading { font-family: 'DM Serif Display', serif; font-size: 28px; line-height: 1.25; color: var(--ink); margin-bottom: 0.75rem; }
+  .intro-sub { font-size: 15px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 1.5rem; }
+  .field-label { font-size: 13px; font-weight: 500; color: var(--ink-soft); margin-bottom: 6px; display: block; }
+  .field-hint { font-size: 12px; color: var(--ink-muted); margin-bottom: 8px; display: block; }
+  .text-input { width: 100%; padding: 13px 16px; border: 1px solid var(--stone); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink); background: var(--white); outline: none; transition: border-color 0.15s; margin-bottom: 1.25rem; -webkit-appearance: none; }
+  .text-input:focus { border-color: var(--green); }
+  .text-input::placeholder { color: var(--ink-muted); }
+  .id-input { letter-spacing: 0.15em; font-size: 22px; font-weight: 500; text-align: center; }
+
+  /* PRODUCT CARD */
+  .product-screen { }
+  .product-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--green-light); color: var(--green-dark); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; margin-bottom: 1rem; }
+  .product-name { font-family: 'DM Serif Display', serif; font-size: 24px; line-height: 1.2; color: var(--ink); margin-bottom: 0.4rem; }
+  .product-desc { font-size: 14px; color: var(--ink-muted); line-height: 1.5; margin-bottom: 1.5rem; }
+
+  /* TRIED TOGGLE */
+  .tried-row { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+  .tried-btn { flex: 1; padding: 12px; border: 1.5px solid var(--stone); border-radius: var(--radius-sm); background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; text-align: center; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+  .tried-btn.selected-yes { border-color: var(--green); background: var(--green-light); color: var(--green-dark); font-weight: 500; }
+  .tried-btn.selected-no { border-color: var(--stone); background: var(--stone); color: var(--ink-muted); }
+
+  /* RATING SECTION */
+  .ratings-wrap { display: flex; flex-direction: column; gap: 1.1rem; margin-bottom: 1.5rem; }
+  .rating-row { background: var(--white); border-radius: var(--radius-sm); padding: 14px 16px; border: 1px solid var(--stone); }
+  .rating-label { font-size: 13px; font-weight: 500; color: var(--ink-soft); margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+  .rating-label svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .stars { display: flex; gap: 6px; }
+  .star { width: 38px; height: 38px; border-radius: 8px; border: 1.5px solid var(--stone); background: var(--cream); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: all 0.12s; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .star.active { background: var(--amber-light); border-color: var(--amber); }
+  .star:active { transform: scale(0.9); }
+
+  /* BUY QUESTION */
+  .buy-section { margin-bottom: 1.5rem; }
+  .buy-label { font-size: 13px; font-weight: 500; color: var(--ink-soft); margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+  .buy-label svg { width: 15px; height: 15px; }
+  .buy-options { display: flex; flex-direction: column; gap: 8px; }
+  .buy-opt { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--white); border: 1.5px solid var(--stone); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .buy-opt.selected { border-color: var(--green); background: var(--green-light); }
+  .buy-opt-dot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--stone); flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .buy-opt.selected .buy-opt-dot { background: var(--green); border-color: var(--green); }
+  .buy-opt.selected .buy-opt-dot::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; display: block; }
+  .buy-opt-text { font-size: 14px; color: var(--ink); line-height: 1.35; }
+
+  /* SKIPPED STATE */
+  .skipped-notice { background: var(--stone); border-radius: var(--radius-sm); padding: 16px; text-align: center; font-size: 14px; color: var(--ink-muted); margin-bottom: 1.5rem; }
+
+  /* NAV */
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; background: var(--white); border-top: 1px solid var(--stone); padding: 0.9rem 1.25rem; display: flex; gap: 10px; max-width: 540px; }
+  .btn-back { padding: 13px 20px; border: 1.5px solid var(--stone); border-radius: var(--radius-sm); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .btn-next { flex: 1; padding: 14px 20px; background: var(--green); border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: white; cursor: pointer; transition: opacity 0.15s; -webkit-tap-highlight-color: transparent; }
+  .btn-next:disabled { opacity: 0.3; cursor: default; }
+
+  /* SAVING */
+  .saving-badge { display: none; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-muted); margin-top: 0.75rem; justify-content: center; }
+  .saving-badge.show { display: flex; }
+  .saving-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* THANK YOU */
+  .thankyou-icon { width: 72px; height: 72px; background: var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+  .thankyou-icon svg { width: 36px; height: 36px; stroke: var(--green); fill: none; stroke-width: 1.5; }
+  .thankyou-heading { font-family: 'DM Serif Display', serif; font-size: 26px; line-height: 1.25; color: var(--ink); text-align: center; margin-bottom: 1.25rem; }
+  .thankyou-body { font-size: 15px; color: var(--ink-soft); line-height: 1.7; text-align: center; margin-bottom: 0.75rem; }
+  .btn-restart { width: 100%; padding: 14px; background: transparent; border: 1.5px solid var(--stone); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; margin-top: 2rem; margin-bottom: 2rem; -webkit-tap-highlight-color: transparent; }
+
+  /* SETUP BANNER */
+  .setup-banner { background: #FFF8E6; border: 1px solid #F0D080; border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: #7A5800; line-height: 1.6; margin-top: 1rem; display: none; }
+  .setup-banner strong { display: block; margin-bottom: 4px; }
+
+  /* PRODUCT DOTS NAV */
+  .dots-nav { display: flex; gap: 6px; justify-content: center; margin-bottom: 1.5rem; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--stone); transition: all 0.2s; }
+  .dot.done { background: var(--green-mid); }
+  .dot.current { background: var(--green); width: 20px; border-radius: 4px; }
+  .dot.skipped { background: var(--stone); opacity: 0.4; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-dot">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 5 7 5 12c0 4.5 3 8 7 8s7-3.5 7-8c0-5-1.5-10-7-10z"/></svg>
+  </div>
+  <span class="header-title">Valoración del taller · RINGANA</span>
+</header>
+
+<div class="progress-wrap" id="progress-wrap">
+  <div class="progress-meta">
+    <span class="progress-label" id="prog-label">Producto 1 de 5</span>
+    <span class="progress-count" id="prog-count">20%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:20%"></div></div>
+</div>
+
+<main>
+
+  <!-- INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-leaf">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 5 7 5 12c0 4.5 3 8 7 8s7-3.5 7-8c0-5-1.5-10-7-10z"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="9" y1="16" x2="7" y2="18"/><line x1="15" y1="16" x2="17" y2="18"/></svg>
+    </div>
+    <h1 class="intro-heading">¿Qué te han parecido los productos?</h1>
+    <p class="intro-sub">Valora brevemente cada producto que hayas probado hoy. Solo un minuto — ¡tu opinión me ayuda a recomendarte mejor! 🌿</p>
+
+    <label class="field-label" for="name-input">¿Cómo te llamas?</label>
+    <input class="text-input" id="name-input" type="text" placeholder="Tu nombre y apellido" autocomplete="off" autocorrect="off" spellcheck="false">
+
+    <label class="field-label" for="id-input">Tu número de participante</label>
+    <span class="field-hint">Regina te ha dado un número al llegar al taller</span>
+    <input class="text-input id-input" id="id-input" type="number" inputmode="numeric" placeholder="Ej: 3" min="1" max="99">
+
+    <div class="bottom-nav">
+      <button class="btn-next" style="flex:1" id="btn-start" disabled onclick="startSurvey()">Empezar →</button>
+    </div>
+  </div>
+
+  <!-- PRODUCTS (generados por JS) -->
+  <div class="screen" id="screen-products">
+    <div class="dots-nav" id="dots-nav"></div>
+    <div id="product-content"></div>
+    <div class="bottom-nav">
+      <button class="btn-back" id="btn-back" onclick="prevProduct()" style="display:none">←</button>
+      <button class="btn-next" id="btn-next" onclick="nextProduct()" disabled>Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- THANK YOU -->
+  <div class="screen" id="screen-thanks">
+    <div class="thankyou-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 5 7 5 12c0 4.5 3 8 7 8s7-3.5 7-8c0-5-1.5-10-7-10z"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="9" y1="16" x2="7" y2="18"/><line x1="15" y1="16" x2="17" y2="18"/></svg>
+    </div>
+    <h2 class="thankyou-heading">¡Gracias, <span id="thanks-name"></span>!</h2>
+    <p class="thankyou-body">Tus valoraciones han quedado guardadas. En breve recibirás por WhatsApp tu análisis personalizado con los productos más recomendados para tu piel. 💚</p>
+    <div class="saving-badge" id="saving-badge"><div class="saving-dot"></div><span id="saving-text">Guardando valoraciones...</span></div>
+    <div class="setup-banner" id="setup-banner"><strong>⚙️ Base de datos no configurada</strong>Configura la SHEET_URL_TALLER en el código para activar el guardado.</div>
+    <button class="btn-restart" onclick="restart()">↩ Volver al inicio</button>
+  </div>
+
+</main>
+
+<script>
+// ============================================================
+// 🔧 CONFIGURACIÓN — PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
+// para la hoja de valoraciones del taller (Hoja 3)
+// ============================================================
+const SHEET_URL_TALLER = 'https://script.google.com/macros/library/d/12SilpVG8Fo7m4f2a_zbHcBsL2AZhLIiDfNbo0RPmN6AJN3AZbZBcS6oN/2';
+// ============================================================
+
+const PRODUCTS = [
+  {
+    id: 'cleanser',
+    name: 'FRESH cleanser',
+    desc: 'Leche limpiadora suave · Limpieza facial',
+    emoji: '🧴'
+  },
+  {
+    id: 'tonic_pure',
+    name: 'FRESH tonic pure',
+    desc: 'Tónico purificante · Equilibra el sebo',
+    emoji: '💧'
+  },
+  {
+    id: 'hydro_serum',
+    name: 'FRESH hydro serum',
+    desc: 'Sérum de hidratación · Textura acuosa',
+    emoji: '✨'
+  },
+  {
+    id: 'skin_perfection',
+    name: 'FRESH skin perfection',
+    desc: 'Tratamiento especial · Efecto en 30 min',
+    emoji: '🌿'
+  },
+  {
+    id: 'eye_serum',
+    name: 'FRESH eye serum',
+    desc: 'Sérum contorno de ojos · Ojeras y arrugas',
+    emoji: '👁'
+  }
+];
+
+const CRITERIA = [
+  { id: 'textura', label: 'Textura', icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8c0-1.66 1.34-3 3-3s3 1.34 3 3"/></svg>' },
+  { id: 'olor',    label: 'Olor / aroma', icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2c0 0-3 2-3 5s3 4 3 7M11 4c0 0-2 1.5-2 3.5s2 3 2 5"/></svg>' },
+  { id: 'sensacion', label: 'Sensación en la piel', icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1l1.5 4h4l-3.5 2.5 1.5 4L8 9l-3.5 2.5 1.5-4L2.5 5h4z"/></svg>' },
+  { id: 'facilidad', label: 'Facilidad de uso', icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l3 3 7-7"/></svg>' },
+];
+
+const BUY_OPTIONS = [
+  { value: 'si',     label: 'Sí, definitivamente lo compraría' },
+  { value: 'quizas', label: 'Quizás, me lo pensaría' },
+  { value: 'no',     label: 'No me ha convencido' },
+];
+
+// State
+let userName = '';
+let participantId = '';
+let currentProduct = 0;
+let ratings = {}; // { product_id: { tried, textura, olor, sensacion, facilidad, comprar } }
+
+// Init ratings
+PRODUCTS.forEach(p => {
+  ratings[p.id] = { tried: null, textura: 0, olor: 0, sensacion: 0, facilidad: 0, comprar: null };
+});
+
+// Intro validation
+document.getElementById('name-input').addEventListener('input', validateIntro);
+document.getElementById('id-input').addEventListener('input', validateIntro);
+function validateIntro() {
+  const name = document.getElementById('name-input').value.trim();
+  const id = document.getElementById('id-input').value.trim();
+  document.getElementById('btn-start').disabled = name.length < 2 || id.length < 1;
+}
+
+function startSurvey() {
+  userName = document.getElementById('name-input').value.trim();
+  participantId = document.getElementById('id-input').value.trim();
+  document.getElementById('screen-intro').classList.remove('active');
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('screen-products').classList.add('active');
+  currentProduct = 0;
+  renderProduct();
+}
+
+function renderDots() {
+  const nav = document.getElementById('dots-nav');
+  nav.innerHTML = PRODUCTS.map((p, i) => {
+    const r = ratings[p.id];
+    let cls = 'dot';
+    if (i === currentProduct) cls += ' current';
+    else if (r.tried !== null) cls += ' done';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function renderProduct() {
+  const p = PRODUCTS[currentProduct];
+  const r = ratings[p.id];
+  const pct = Math.round(((currentProduct + 1) / PRODUCTS.length) * 100);
+
+  document.getElementById('prog-label').textContent = `Producto ${currentProduct + 1} de ${PRODUCTS.length}`;
+  document.getElementById('prog-count').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  document.getElementById('btn-back').style.display = currentProduct === 0 ? 'none' : 'block';
+  const btnNext = document.getElementById('btn-next');
+  btnNext.textContent = currentProduct === PRODUCTS.length - 1 ? 'Finalizar →' : 'Siguiente →';
+
+  renderDots();
+  updateNextBtn();
+
+  const content = document.getElementById('product-content');
+
+  // Build star HTML for a criterion
+  function starsHTML(criterionId, currentVal) {
+    return [1,2,3,4,5].map(n =>
+      `<div class="star ${currentVal >= n ? 'active' : ''}" onclick="setRating('${p.id}','${criterionId}',${n})" data-val="${n}">★</div>`
+    ).join('');
+  }
+
+  // Build buy options HTML
+  function buyHTML() {
+    return BUY_OPTIONS.map(opt =>
+      `<div class="buy-opt ${r.comprar === opt.value ? 'selected' : ''}" onclick="setBuy('${p.id}','${opt.value}')">
+        <div class="buy-opt-dot"></div>
+        <span class="buy-opt-text">${opt.label}</span>
+      </div>`
+    ).join('');
+  }
+
+  const ratingsSection = r.tried === true ? `
+    <div class="ratings-wrap">
+      ${CRITERIA.map(c => `
+        <div class="rating-row" id="row-${p.id}-${c.id}">
+          <div class="rating-label">${c.icon} ${c.label}</div>
+          <div class="stars" id="stars-${p.id}-${c.id}">${starsHTML(c.id, r[c.id])}</div>
+        </div>`).join('')}
+    </div>
+    <div class="buy-section">
+      <div class="buy-label">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h2l2 7h6l1-4H6"/><circle cx="7" cy="13" r="1"/><circle cx="11" cy="13" r="1"/></svg>
+        ¿Lo comprarías?
+      </div>
+      <div class="buy-options" id="buy-${p.id}">${buyHTML()}</div>
+    </div>` : r.tried === false ? `
+    <div class="skipped-notice">Has marcado que no has probado este producto. Pulsa Siguiente para continuar.</div>` : '';
+
+  content.innerHTML = `
+    <div class="product-screen">
+      <div class="product-badge">${p.emoji} Producto ${currentProduct + 1}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-desc">${p.desc}</div>
+      <p class="field-label">¿Has probado este producto hoy?</p>
+      <div class="tried-row">
+        <button class="tried-btn ${r.tried === true ? 'selected-yes' : ''}" onclick="setTried('${p.id}', true)">✓ Sí lo he probado</button>
+        <button class="tried-btn ${r.tried === false ? 'selected-no' : ''}" onclick="setTried('${p.id}', false)">No lo he probado</button>
+      </div>
+      ${ratingsSection}
+    </div>`;
+
+  window.scrollTo(0, 0);
+}
+
+function setTried(productId, val) {
+  ratings[productId].tried = val;
+  if (!val) {
+    // Reset ratings if skipping
+    ratings[productId] = { tried: false, textura: 0, olor: 0, sensacion: 0, facilidad: 0, comprar: null };
+  }
+  renderProduct();
+}
+
+function setRating(productId, criterionId, val) {
+  ratings[productId][criterionId] = val;
+  // Re-render just the stars for this criterion
+  const container = document.getElementById(`stars-${productId}-${criterionId}`);
+  if (container) {
+    container.innerHTML = [1,2,3,4,5].map(n =>
+      `<div class="star ${val >= n ? 'active' : ''}" onclick="setRating('${productId}','${criterionId}',${n})"  data-val="${n}">★</div>`
+    ).join('');
+    // Re-attach listeners aren't needed since onclick is inline
+  }
+  updateNextBtn();
+}
+
+function setBuy(productId, val) {
+  ratings[productId].comprar = val;
+  const container = document.getElementById(`buy-${productId}`);
+  if (container) {
+    container.querySelectorAll('.buy-opt').forEach(el => el.classList.remove('selected'));
+    BUY_OPTIONS.forEach((opt, i) => {
+      if (opt.value === val) container.children[i].classList.add('selected');
+    });
+  }
+  updateNextBtn();
+}
+
+function isProductComplete(productId) {
+  const r = ratings[productId];
+  if (r.tried === null) return false;
+  if (r.tried === false) return true;
+  // If tried, need all criteria rated + buy answer
+  return r.textura > 0 && r.olor > 0 && r.sensacion > 0 && r.facilidad > 0 && r.comprar !== null;
+}
+
+function updateNextBtn() {
+  const p = PRODUCTS[currentProduct];
+  document.getElementById('btn-next').disabled = !isProductComplete(p.id);
+}
+
+function nextProduct() {
+  if (currentProduct < PRODUCTS.length - 1) {
+    currentProduct++;
+    renderProduct();
+  } else {
+    submitSurvey();
+  }
+}
+
+function prevProduct() {
+  if (currentProduct > 0) {
+    currentProduct--;
+    renderProduct();
+  }
+}
+
+function submitSurvey() {
+  document.getElementById('screen-products').classList.remove('active');
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('screen-thanks').classList.add('active');
+  document.getElementById('thanks-name').textContent = userName;
+  window.scrollTo(0, 0);
+
+  // Build flat data object for Sheets
+  const data = {
+    timestamp: new Date().toLocaleString('es-ES'),
+    nombre: userName,
+    id_participante: participantId,
+  };
+
+  PRODUCTS.forEach(p => {
+    const r = ratings[p.id];
+    data[`${p.id}_probado`]   = r.tried ? 'Sí' : 'No';
+    data[`${p.id}_textura`]   = r.tried ? r.textura   : '—';
+    data[`${p.id}_olor`]      = r.tried ? r.olor      : '—';
+    data[`${p.id}_sensacion`] = r.tried ? r.sensacion : '—';
+    data[`${p.id}_facilidad`] = r.tried ? r.facilidad : '—';
+    data[`${p.id}_comprar`]   = r.tried ? (r.comprar || '—') : '—';
+  });
+
+  saveToSheet(data);
+}
+
+function saveToSheet(data) {
+  if (!SHEET_URL_TALLER) {
+    document.getElementById('setup-banner').style.display = 'block';
+    return;
+  }
+  const badge = document.getElementById('saving-badge');
+  const badgeText = document.getElementById('saving-text');
+  badge.classList.add('show');
+  badgeText.textContent = 'Guardando valoraciones...';
+  fetch(SHEET_URL_TALLER, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    badgeText.textContent = '✓ Guardado correctamente';
+    setTimeout(() => badge.classList.remove('show'), 3000);
+  }).catch(() => {
+    badgeText.textContent = '⚠ No se pudo guardar';
+    setTimeout(() => badge.classList.remove('show'), 3000);
+  });
+}
+
+function restart() {
+  userName = ''; participantId = ''; currentProduct = 0;
+  PRODUCTS.forEach(p => { ratings[p.id] = { tried: null, textura: 0, olor: 0, sensacion: 0, facilidad: 0, comprar: null }; });
+  document.getElementById('screen-thanks').classList.remove('active');
+  document.getElementById('setup-banner').style.display = 'none';
+  document.getElementById('name-input').value = '';
+  document.getElementById('id-input').value = '';
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('screen-intro').classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
