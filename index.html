@@ -60,6 +60,14 @@
   .thankyou-heading { font-family: 'DM Serif Display', serif; font-size: 26px; line-height: 1.25; color: var(--ink); text-align: center; margin-bottom: 1.25rem; }
   .thankyou-body { font-size: 16px; color: var(--ink-soft); line-height: 1.7; text-align: center; margin-bottom: 0.75rem; }
   .btn-restart { width: 100%; padding: 14px; background: transparent; border: 1.5px solid var(--stone); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; margin-top: 2rem; margin-bottom: 2rem; -webkit-tap-highlight-color: transparent; }
+  /* CONTACT FIELDS */
+  .contact-fields { display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem; }
+  .field-hint { font-size: 12px; color: var(--ink-muted); margin-top: 3px; line-height: 1.45; }
+  .field-error { font-size: 12px; color: #d94040; margin-top: 3px; display: none; }
+  .name-input.error { border-color: #d94040; }
+
+  .contact-fields .name-input { margin-bottom: 0; }
+
   /* SAVING INDICATOR */
   .saving-badge { display: none; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-muted); margin-top: 0.75rem; }
   .saving-badge.show { display: flex; }
@@ -97,8 +105,23 @@
     <h1 class="intro-heading">¿Cómo es tu piel?</h1>
     <p class="intro-sub">Responde estas 10 preguntas rápidas y te preparo algo pensado especialmente para ti para el taller 🌿</p>
     <div class="intro-note">Si tienes algún problema de piel serio o estás con tratamiento dermatológico, no te preocupes — ya hablamos el día del taller.</div>
-    <label class="name-label" for="name-input">¿Cómo te llamas?</label>
-    <input class="name-input" id="name-input" type="text" placeholder="Tu nombre" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="contact-fields">
+      <div>
+        <label class="name-label" for="name-input">¿Cómo te llamas?</label>
+        <input class="name-input" id="name-input" type="text" placeholder="Tu nombre" autocomplete="given-name" autocorrect="off" spellcheck="false">
+      </div>
+      <div>
+        <label class="name-label" for="email-input">Tu correo electrónico</label>
+        <input class="name-input" id="email-input" type="email" placeholder="hola@ejemplo.com" autocomplete="email" autocorrect="off" spellcheck="false" inputmode="email">
+        <p class="field-hint">Solo para enviarte tu recomendación personalizada después del taller 💌</p>
+        <p class="field-error" id="email-error">Revisa que el correo esté bien escrito</p>
+      </div>
+      <div>
+        <label class="name-label" for="phone-input">Tu número de teléfono <span style="color:var(--ink-muted);font-weight:400">(opcional)</span></label>
+        <input class="name-input" id="phone-input" type="tel" placeholder="612 345 678" autocomplete="tel" inputmode="tel">
+        <p class="field-hint">Si prefieres que te mande las recomendaciones por WhatsApp 📲</p>
+      </div>
+    </div>
     <div class="bottom-nav">
       <button class="btn-next" style="flex:1" id="btn-start" disabled onclick="startQuiz()">Empezar →</button>
     </div>
@@ -225,15 +248,38 @@ const CONCERN_MAP = { A:'Brillos / poros', B:'Granitos / imperfecciones', C:'Seq
 
 let current = 0, answers = {}, userName = '';
 
-document.getElementById('name-input').addEventListener('input', function() {
-  document.getElementById('btn-start').disabled = this.value.trim().length < 2;
-});
+let userEmail = '', userPhone = '';
+
+function validateIntro() {
+  const name = document.getElementById('name-input').value.trim();
+  const email = document.getElementById('email-input').value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const emailError = document.getElementById('email-error');
+
+  if (email.length > 0 && !emailOk) {
+    emailError.style.display = 'block';
+    document.getElementById('email-input').classList.add('error');
+  } else {
+    emailError.style.display = 'none';
+    document.getElementById('email-input').classList.remove('error');
+  }
+
+  document.getElementById('btn-start').disabled = !(name.length >= 2 && emailOk);
+}
+
+document.getElementById('name-input').addEventListener('input', validateIntro);
+document.getElementById('email-input').addEventListener('input', validateIntro);
 document.getElementById('name-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && this.value.trim().length >= 2) startQuiz();
+  if (e.key === 'Enter') document.getElementById('email-input').focus();
+});
+document.getElementById('email-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('phone-input').focus();
 });
 
 function startQuiz() {
   userName = document.getElementById('name-input').value.trim();
+  userEmail = document.getElementById('email-input').value.trim();
+  userPhone = document.getElementById('phone-input').value.trim();
   document.getElementById('screen-intro').classList.remove('active');
   document.getElementById('progress-wrap').style.display = 'block';
   document.getElementById('screen-quiz').classList.add('active');
@@ -368,6 +414,8 @@ function showResult() {
   saveToSheet({
     timestamp: new Date().toLocaleString('es-ES'),
     nombre: userName,
+    email: userEmail,
+    telefono: userPhone || '—',
     tipo_piel: skinLabel(skinResult.main),
     sensible: skinResult.isSensitive ? 'Sí' : 'No',
     deshidratada: skinResult.dehydrated ? 'Sí' : 'No',
@@ -385,10 +433,12 @@ function showResult() {
 }
 
 function restart() {
-  current=0; answers={}; userName='';
+  current=0; answers={}; userName=''; userEmail=''; userPhone='';
   document.getElementById('screen-result').classList.remove('active');
   document.getElementById('setup-banner').style.display='none';
   document.getElementById('name-input').value='';
+  document.getElementById('email-input').value='';
+  document.getElementById('phone-input').value='';
   document.getElementById('btn-start').disabled=true;
   document.getElementById('screen-intro').classList.add('active');
   window.scrollTo(0,0);
