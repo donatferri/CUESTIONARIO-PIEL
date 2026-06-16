@@ -51,6 +51,10 @@
   .text-input::placeholder { color: var(--ink-muted); }
   .id-input { letter-spacing: 0.15em; font-size: 22px; font-weight: 500; text-align: center; }
 
+  .field-error { font-size: 12px; color: #d94040; margin-top: 3px; display: none; }
+  .text-input.error { border-color: #d94040; }
+  .contact-fields { display: flex; flex-direction: column; gap: 0; }
+
   /* PRODUCT CARD */
   .product-screen { }
   .product-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--green-light); color: var(--green-dark); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; margin-bottom: 1rem; }
@@ -147,11 +151,12 @@
     <p class="intro-sub">Valora brevemente cada producto que hayas probado hoy. Solo un minuto — ¡tu opinión me ayuda a recomendarte mejor! 🌿</p>
 
     <label class="field-label" for="name-input">¿Cómo te llamas?</label>
-    <input class="text-input" id="name-input" type="text" placeholder="Tu nombre y apellido" autocomplete="off" autocorrect="off" spellcheck="false">
+    <input class="text-input" id="name-input" type="text" placeholder="Tu nombre" autocomplete="given-name" autocorrect="off" spellcheck="false">
 
-    <label class="field-label" for="id-input">Tu número de participante</label>
-    <span class="field-hint">Regina te ha dado un número al llegar al taller</span>
-    <input class="text-input id-input" id="id-input" type="number" inputmode="numeric" placeholder="Ej: 3" min="1" max="99">
+    <label class="field-label" for="email-input">Tu correo electrónico</label>
+    <span class="field-hint">El mismo que usaste en el cuestionario de piel — así puedo unir tus respuestas 💌</span>
+    <input class="text-input" id="email-input" type="email" placeholder="hola@ejemplo.com" autocomplete="email" autocorrect="off" spellcheck="false" inputmode="email">
+    <p class="field-error" id="email-error">Revisa que el correo esté bien escrito</p>
 
     <div class="bottom-nav">
       <button class="btn-next" style="flex:1" id="btn-start" disabled onclick="startSurvey()">Empezar →</button>
@@ -238,7 +243,7 @@ const BUY_OPTIONS = [
 
 // State
 let userName = '';
-let participantId = '';
+let userEmail = '';
 let currentProduct = 0;
 let ratings = {}; // { product_id: { tried, textura, olor, sensacion, facilidad, comprar } }
 
@@ -249,16 +254,31 @@ PRODUCTS.forEach(p => {
 
 // Intro validation
 document.getElementById('name-input').addEventListener('input', validateIntro);
-document.getElementById('id-input').addEventListener('input', validateIntro);
+document.getElementById('email-input').addEventListener('input', validateIntro);
+document.getElementById('name-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('email-input').focus();
+});
+
 function validateIntro() {
   const name = document.getElementById('name-input').value.trim();
-  const id = document.getElementById('id-input').value.trim();
-  document.getElementById('btn-start').disabled = name.length < 2 || id.length < 1;
+  const email = document.getElementById('email-input').value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const emailError = document.getElementById('email-error');
+
+  if (email.length > 0 && !emailOk) {
+    emailError.style.display = 'block';
+    document.getElementById('email-input').classList.add('error');
+  } else {
+    emailError.style.display = 'none';
+    document.getElementById('email-input').classList.remove('error');
+  }
+
+  document.getElementById('btn-start').disabled = !(name.length >= 2 && emailOk);
 }
 
 function startSurvey() {
   userName = document.getElementById('name-input').value.trim();
-  participantId = document.getElementById('id-input').value.trim();
+  userEmail = document.getElementById('email-input').value.trim();
   document.getElementById('screen-intro').classList.remove('active');
   document.getElementById('progress-wrap').style.display = 'block';
   document.getElementById('screen-products').classList.add('active');
@@ -419,7 +439,7 @@ function submitSurvey() {
   const data = {
     timestamp: new Date().toLocaleString('es-ES'),
     nombre: userName,
-    id_participante: participantId,
+    email: userEmail,
   };
 
   PRODUCTS.forEach(p => {
@@ -459,12 +479,12 @@ function saveToSheet(data) {
 }
 
 function restart() {
-  userName = ''; participantId = ''; currentProduct = 0;
+  userName = ''; userEmail = ''; currentProduct = 0;
   PRODUCTS.forEach(p => { ratings[p.id] = { tried: null, textura: 0, olor: 0, sensacion: 0, facilidad: 0, comprar: null }; });
   document.getElementById('screen-thanks').classList.remove('active');
   document.getElementById('setup-banner').style.display = 'none';
   document.getElementById('name-input').value = '';
-  document.getElementById('id-input').value = '';
+  document.getElementById('email-input').value = '';
   document.getElementById('btn-start').disabled = true;
   document.getElementById('screen-intro').classList.add('active');
   window.scrollTo(0, 0);
