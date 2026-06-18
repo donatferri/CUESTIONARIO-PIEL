@@ -107,19 +107,35 @@
     <div class="intro-note">Si tienes algún problema de piel serio o estás con tratamiento dermatológico, no te preocupes — ya hablamos el día del taller.</div>
     <div class="contact-fields">
       <div>
-        <label class="name-label" for="name-input">¿Cómo te llamas?</label>
-        <input class="name-input" id="name-input" type="text" placeholder="Tu nombre" autocomplete="given-name" autocorrect="off" spellcheck="false">
+        <label class="name-label" for="name-input">Nombre y apellidos *</label>
+        <input class="name-input" id="name-input" type="text" placeholder="Tu nombre y apellidos" autocomplete="name" autocorrect="off" spellcheck="false">
       </div>
       <div>
-        <label class="name-label" for="email-input">Tu correo electrónico</label>
+        <label class="name-label" for="email-input">Correo electrónico *</label>
         <input class="name-input" id="email-input" type="email" placeholder="hola@ejemplo.com" autocomplete="email" autocorrect="off" spellcheck="false" inputmode="email">
-        <p class="field-hint">Solo para enviarte tu recomendación personalizada después del taller 💌</p>
+        <p class="field-hint">Te enviaré tu recomendación personalizada aquí 💌</p>
         <p class="field-error" id="email-error">Revisa que el correo esté bien escrito</p>
       </div>
       <div>
-        <label class="name-label" for="phone-input">Tu número de teléfono <span style="color:var(--ink-muted);font-weight:400">(opcional)</span></label>
+        <label class="name-label" for="phone-input">Teléfono <span style="color:var(--ink-muted);font-weight:400">(opcional)</span></label>
         <input class="name-input" id="phone-input" type="tel" placeholder="612 345 678" autocomplete="tel" inputmode="tel">
         <p class="field-hint">Si prefieres que te mande las recomendaciones por WhatsApp 📲</p>
+      </div>
+      <div>
+        <label class="name-label" for="dob-input">Fecha de nacimiento *</label>
+        <input class="name-input" id="dob-input" type="date" autocomplete="bday">
+      </div>
+      <div>
+        <label class="name-label" for="dni-input">DNI <span style="color:var(--ink-muted);font-weight:400">(opcional)</span></label>
+        <input class="name-input" id="dni-input" type="text" placeholder="12345678A" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="9">
+      </div>
+      <div>
+        <label class="name-label" for="address-input">Dirección *</label>
+        <input class="name-input" id="address-input" type="text" placeholder="Calle, número, piso" autocomplete="street-address" autocorrect="off" spellcheck="false">
+      </div>
+      <div>
+        <label class="name-label" for="city-input">Ciudad y código postal *</label>
+        <input class="name-input" id="city-input" type="text" placeholder="Madrid, 28001" autocomplete="off" autocorrect="off" spellcheck="false">
       </div>
     </div>
     <div class="bottom-nav">
@@ -171,7 +187,7 @@
 // Mientras esté vacía, el cuestionario funciona igual pero
 // las respuestas NO se guardan en Google Sheets.
 // ============================================================
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzR_7OohAQ4ORv8XjoMbQtV3Z57S0DTMHKDYrAZUvw7xaFdsxT1Ce3fp8IEmfRHnZxL/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwdSlVFqET1hqiGiG95TX5Iw5zD2QJ-4Qyd-XYaadt_hkhxms0J-1OfWgZDZPeeHs2z/exec';
 // Ejemplo: const SHEET_URL = 'https://script.google.com/macros/s/XXXX/exec';
 // ============================================================
 
@@ -248,11 +264,14 @@ const CONCERN_MAP = { A:'Brillos / poros', B:'Granitos / imperfecciones', C:'Seq
 
 let current = 0, answers = {}, userName = '';
 
-let userEmail = '', userPhone = '';
+let userEmail = '', userPhone = '', userDob = '', userDni = '', userAddress = '', userCity = '';
 
 function validateIntro() {
   const name = document.getElementById('name-input').value.trim();
   const email = document.getElementById('email-input').value.trim();
+  const dob = document.getElementById('dob-input').value.trim();
+  const address = document.getElementById('address-input').value.trim();
+  const city = document.getElementById('city-input').value.trim();
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const emailError = document.getElementById('email-error');
 
@@ -264,11 +283,14 @@ function validateIntro() {
     document.getElementById('email-input').classList.remove('error');
   }
 
-  document.getElementById('btn-start').disabled = !(name.length >= 2 && emailOk);
+  document.getElementById('btn-start').disabled = !(name.length >= 2 && emailOk && dob && address.length >= 5 && city.length >= 2);
 }
 
 document.getElementById('name-input').addEventListener('input', validateIntro);
 document.getElementById('email-input').addEventListener('input', validateIntro);
+document.getElementById('dob-input').addEventListener('change', validateIntro);
+document.getElementById('address-input').addEventListener('input', validateIntro);
+document.getElementById('city-input').addEventListener('input', validateIntro);
 document.getElementById('name-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') document.getElementById('email-input').focus();
 });
@@ -280,6 +302,10 @@ function startQuiz() {
   userName = document.getElementById('name-input').value.trim();
   userEmail = document.getElementById('email-input').value.trim();
   userPhone = document.getElementById('phone-input').value.trim();
+  userDob = document.getElementById('dob-input').value;
+  userDni = document.getElementById('dni-input').value.trim();
+  userAddress = document.getElementById('address-input').value.trim();
+  userCity = document.getElementById('city-input').value.trim();
   document.getElementById('screen-intro').classList.remove('active');
   document.getElementById('progress-wrap').style.display = 'block';
   document.getElementById('screen-quiz').classList.add('active');
@@ -375,7 +401,7 @@ function buildWA(a, name) {
   return text;
 }
 
-function saveToSheet(data) {
+function saveToSheet(data, destino) {
   if (!SHEET_URL) {
     document.getElementById('setup-banner').style.display = 'block';
     return;
@@ -388,7 +414,7 @@ function saveToSheet(data) {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+    body: JSON.stringify({ ...data, _hoja: destino })
   }).then(() => {
     badgeText.textContent = '✓ Guardado correctamente';
     setTimeout(() => badge.classList.remove('show'), 3000);
@@ -410,12 +436,23 @@ function showResult() {
   // Calcular tipo de piel internamente (no se muestra, se guarda en Sheets)
   const skinResult = getSkinType(answers);
 
-  // Guardar en Google Sheets
+  // Guardar datos de cliente en hoja Clientes
   saveToSheet({
     timestamp: new Date().toLocaleString('es-ES'),
     nombre: userName,
     email: userEmail,
     telefono: userPhone || '—',
+    fecha_nacimiento: userDob || '—',
+    dni: userDni || '—',
+    direccion: userAddress || '—',
+    ciudad: userCity || '—'
+  }, 'clientes');
+
+  // Guardar cuestionario de piel en hoja TipoPiel
+  saveToSheet({
+    timestamp: new Date().toLocaleString('es-ES'),
+    nombre: userName,
+    email: userEmail,
     tipo_piel: skinLabel(skinResult.main),
     sensible: skinResult.isSensitive ? 'Sí' : 'No',
     deshidratada: skinResult.dehydrated ? 'Sí' : 'No',
@@ -429,16 +466,21 @@ function showResult() {
     resp_final_dia: answers.endofday||'',
     resp_hidratante: answers.moisturizer||'',
     resp_edad: answers.age||''
-  });
+  }, 'tipopiel');
 }
 
 function restart() {
   current=0; answers={}; userName=''; userEmail=''; userPhone='';
+  userDob=''; userDni=''; userAddress=''; userCity='';
   document.getElementById('screen-result').classList.remove('active');
   document.getElementById('setup-banner').style.display='none';
   document.getElementById('name-input').value='';
   document.getElementById('email-input').value='';
   document.getElementById('phone-input').value='';
+  document.getElementById('dob-input').value='';
+  document.getElementById('dni-input').value='';
+  document.getElementById('address-input').value='';
+  document.getElementById('city-input').value='';
   document.getElementById('btn-start').disabled=true;
   document.getElementById('screen-intro').classList.add('active');
   window.scrollTo(0,0);
