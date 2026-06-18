@@ -68,6 +68,11 @@
 
   .contact-fields .name-input { margin-bottom: 0; }
 
+  .consent-wrap { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1.25rem; }
+  .consent-wrap input[type="checkbox"] { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--green-mid); flex-shrink: 0; cursor: pointer; }
+  .consent-wrap label { font-size: 13px; color: var(--ink-soft); line-height: 1.5; cursor: pointer; }
+  .consent-wrap a { color: var(--green-dark); text-decoration: underline; }
+
   /* SAVING INDICATOR */
   .saving-badge { display: none; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-muted); margin-top: 0.75rem; }
   .saving-badge.show { display: flex; }
@@ -137,6 +142,10 @@
         <label class="name-label" for="city-input">Ciudad y código postal *</label>
         <input class="name-input" id="city-input" type="text" placeholder="Madrid, 28001" autocomplete="off" autocorrect="off" spellcheck="false">
       </div>
+    </div>
+    <div class="consent-wrap">
+      <input type="checkbox" id="consent-check">
+      <label for="consent-check">He leído y acepto la <a href="politica-privacidad.html" target="_blank">política de privacidad</a>. Tus datos solo se usan para preparar tu recomendación personalizada y no se comparten con terceros.</label>
     </div>
     <div class="bottom-nav">
       <button class="btn-next" style="flex:1" id="btn-start" disabled onclick="startQuiz()">Empezar →</button>
@@ -283,7 +292,9 @@ function validateIntro() {
     document.getElementById('email-input').classList.remove('error');
   }
 
-  document.getElementById('btn-start').disabled = !(name.length >= 2 && emailOk && dob && address.length >= 5 && city.length >= 2);
+  const consent = document.getElementById('consent-check').checked;
+
+  document.getElementById('btn-start').disabled = !(name.length >= 2 && emailOk && dob && address.length >= 5 && city.length >= 2 && consent);
 }
 
 document.getElementById('name-input').addEventListener('input', validateIntro);
@@ -291,6 +302,7 @@ document.getElementById('email-input').addEventListener('input', validateIntro);
 document.getElementById('dob-input').addEventListener('change', validateIntro);
 document.getElementById('address-input').addEventListener('input', validateIntro);
 document.getElementById('city-input').addEventListener('input', validateIntro);
+document.getElementById('consent-check').addEventListener('change', validateIntro);
 document.getElementById('name-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') document.getElementById('email-input').focus();
 });
@@ -481,6 +493,7 @@ function restart() {
   document.getElementById('dni-input').value='';
   document.getElementById('address-input').value='';
   document.getElementById('city-input').value='';
+  document.getElementById('consent-check').checked=false;
   document.getElementById('btn-start').disabled=true;
   document.getElementById('screen-intro').classList.add('active');
   window.scrollTo(0,0);
