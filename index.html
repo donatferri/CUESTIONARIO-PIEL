@@ -37,9 +37,22 @@
   .intro-sub { font-size: 15px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 1.25rem; }
   .intro-note { background: var(--green-light); border-left: 3px solid var(--green-mid); padding: 10px 14px; font-size: 13px; color: var(--green-dark); line-height: 1.6; margin-bottom: 1.75rem; }
   .name-label { font-size: 13px; font-weight: 500; color: var(--ink-soft); margin-bottom: 6px; display: block; }
-  .name-input { width: 100%; padding: 13px 16px; border: 1px solid var(--stone); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink); background: var(--white); outline: none; transition: border-color 0.15s; margin-bottom: 1.5rem; -webkit-appearance: none; }
+  .name-input { width: 100%; padding: 13px 16px; border: 1px solid var(--stone); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink); background: var(--white); outline: none; transition: border-color 0.15s; margin-bottom: 0; -webkit-appearance: none; }
   .name-input:focus { border-color: var(--green); }
   .name-input::placeholder { color: var(--ink-muted); }
+
+  /* GÉNERO — selector de 3 botones */
+  .gender-group { display: flex; gap: 8px; }
+  .gender-btn {
+    flex: 1; padding: 11px 8px; background: var(--white);
+    border: 1.5px solid var(--stone); border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft);
+    cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent; user-select: none;
+  }
+  .gender-btn:active { transform: scale(0.97); }
+  .gender-btn.selected { border-color: var(--green); background: var(--green-light); color: var(--green-dark); font-weight: 500; }
+
   .q-number { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.06em; margin-bottom: 0.6rem; }
   .q-text { font-family: 'DM Serif Display', serif; font-size: 22px; line-height: 1.35; color: var(--ink); margin-bottom: 1.5rem; }
   .q-multi-hint { font-size: 12px; color: var(--green); font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.02em; }
@@ -54,32 +67,23 @@
   .btn-back { padding: 13px 20px; border: 1.5px solid var(--stone); border-radius: var(--radius-sm); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .btn-next { flex: 1; padding: 14px 20px; background: var(--green); border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: white; cursor: pointer; transition: opacity 0.15s; -webkit-tap-highlight-color: transparent; }
   .btn-next:disabled { opacity: 0.3; cursor: default; }
-  /* THANK YOU SCREEN */
   .thankyou-icon { width: 72px; height: 72px; background: var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
   .thankyou-icon svg { width: 36px; height: 36px; stroke: var(--green); }
   .thankyou-heading { font-family: 'DM Serif Display', serif; font-size: 26px; line-height: 1.25; color: var(--ink); text-align: center; margin-bottom: 1.25rem; }
   .thankyou-body { font-size: 16px; color: var(--ink-soft); line-height: 1.7; text-align: center; margin-bottom: 0.75rem; }
   .btn-restart { width: 100%; padding: 14px; background: transparent; border: 1.5px solid var(--stone); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; margin-top: 2rem; margin-bottom: 2rem; -webkit-tap-highlight-color: transparent; }
-  /* CONTACT FIELDS */
   .contact-fields { display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem; }
   .field-hint { font-size: 12px; color: var(--ink-muted); margin-top: 3px; line-height: 1.45; }
   .field-error { font-size: 12px; color: #d94040; margin-top: 3px; display: none; }
   .name-input.error { border-color: #d94040; }
-
-  .contact-fields .name-input { margin-bottom: 0; }
-
   .consent-wrap { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1.25rem; }
   .consent-wrap input[type="checkbox"] { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--green-mid); flex-shrink: 0; cursor: pointer; }
   .consent-wrap label { font-size: 13px; color: var(--ink-soft); line-height: 1.5; cursor: pointer; }
   .consent-wrap a { color: var(--green-dark); text-decoration: underline; }
-
-  /* SAVING INDICATOR */
   .saving-badge { display: none; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-muted); margin-top: 0.75rem; }
   .saving-badge.show { display: flex; }
   .saving-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.2s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-  /* SETUP BANNER — solo visible cuando no hay script configurado */
   .setup-banner { background: #FFF8E6; border: 1px solid #F0D080; border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: #7A5800; line-height: 1.6; margin-bottom: 1rem; display: none; }
   .setup-banner strong { display: block; margin-bottom: 4px; }
 </style>
@@ -110,43 +114,69 @@
     <h1 class="intro-heading">¿Cómo es tu piel?</h1>
     <p class="intro-sub">Responde estas 10 preguntas rápidas y te preparo algo pensado especialmente para ti para el taller 🌿</p>
     <div class="intro-note">Si tienes algún problema de piel serio o estás con tratamiento dermatológico, no te preocupes — ya hablamos el día del taller.</div>
+
     <div class="contact-fields">
+      <!-- Nombre -->
       <div>
         <label class="name-label" for="name-input">Nombre y apellidos *</label>
         <input class="name-input" id="name-input" type="text" placeholder="Tu nombre y apellidos" autocomplete="name" autocorrect="off" spellcheck="false">
       </div>
+
+      <!-- ── GÉNERO (nuevo) ── -->
+      <div>
+        <label class="name-label">Género *</label>
+        <div class="gender-group" id="gender-group">
+          <button type="button" class="gender-btn" data-value="Mujer" onclick="selectGender(this)">👩 Mujer</button>
+          <button type="button" class="gender-btn" data-value="Hombre" onclick="selectGender(this)">👨 Hombre</button>
+          <button type="button" class="gender-btn" data-value="Prefiero no decir" onclick="selectGender(this)">— No decir</button>
+        </div>
+      </div>
+
+      <!-- Email -->
       <div>
         <label class="name-label" for="email-input">Correo electrónico *</label>
         <input class="name-input" id="email-input" type="email" placeholder="hola@ejemplo.com" autocomplete="email" autocorrect="off" spellcheck="false" inputmode="email">
         <p class="field-hint">Te enviaré tu recomendación personalizada aquí 💌</p>
         <p class="field-error" id="email-error">Revisa que el correo esté bien escrito</p>
       </div>
+
+      <!-- Teléfono -->
       <div>
         <label class="name-label" for="phone-input">Teléfono <span style="color:var(--ink-muted);font-weight:400">(opcional)</span></label>
         <input class="name-input" id="phone-input" type="tel" placeholder="612 345 678" autocomplete="tel" inputmode="tel">
         <p class="field-hint">Si prefieres que te mande las recomendaciones por WhatsApp 📲</p>
       </div>
+
+      <!-- Fecha de nacimiento -->
       <div>
         <label class="name-label" for="dob-input">Fecha de nacimiento *</label>
         <input class="name-input" id="dob-input" type="date" autocomplete="bday">
       </div>
+
+      <!-- DNI -->
       <div>
         <label class="name-label" for="dni-input">DNI <span style="color:var(--ink-muted);font-weight:400">(opcional)</span></label>
         <input class="name-input" id="dni-input" type="text" placeholder="12345678A" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="9">
       </div>
+
+      <!-- Dirección -->
       <div>
         <label class="name-label" for="address-input">Dirección *</label>
         <input class="name-input" id="address-input" type="text" placeholder="Calle, número, piso" autocomplete="street-address" autocorrect="off" spellcheck="false">
       </div>
+
+      <!-- Ciudad -->
       <div>
         <label class="name-label" for="city-input">Ciudad y código postal *</label>
         <input class="name-input" id="city-input" type="text" placeholder="Madrid, 28001" autocomplete="off" autocorrect="off" spellcheck="false">
       </div>
     </div>
+
     <div class="consent-wrap">
       <input type="checkbox" id="consent-check">
       <label for="consent-check">He leído y acepto la <a href="politica-privacidad.html" target="_blank">política de privacidad</a>. Tus datos solo se usan para preparar tu recomendación personalizada y no se comparten con terceros.</label>
     </div>
+
     <div class="bottom-nav">
       <button class="btn-next" style="flex:1" id="btn-start" disabled onclick="startQuiz()">Empezar →</button>
     </div>
@@ -172,32 +202,23 @@
     <h2 class="thankyou-heading">¡Muchas gracias, <span id="thankyou-name"></span>!</h2>
     <p class="thankyou-body">Tus respuestas han quedado guardadas correctamente.</p>
     <p class="thankyou-body">En el taller descubriremos juntas cuál es tu tipo de piel y te daré recomendaciones de productos adaptadas a ti. ¡Nos vemos pronto! 💚</p>
-
-    <!-- Indicador de guardado -->
     <div class="saving-badge" id="saving-badge">
       <div class="saving-dot"></div>
       <span id="saving-text">Guardando respuestas...</span>
     </div>
-
-    <!-- Banner de aviso si el script no está configurado -->
     <div class="setup-banner" id="setup-banner">
       <strong>⚙️ Base de datos no configurada</strong>
-      Tus respuestas se han procesado correctamente, pero aún no se están guardando en Google Sheets. Sigue las instrucciones del documento para activarlo.
+      Tus respuestas se han procesado correctamente, pero aún no se están guardando en Google Sheets.
     </div>
-
     <button class="btn-restart" onclick="restart()">↩ Volver al inicio</button>
   </div>
 </main>
 
 <script>
 // ============================================================
-// 🔧 CONFIGURACIÓN — PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
-// Sigue las instrucciones del documento para obtenerla.
-// Mientras esté vacía, el cuestionario funciona igual pero
-// las respuestas NO se guardan en Google Sheets.
+// 🔧 PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
 // ============================================================
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzR_7OohAQ4ORv8XjoMbQtV3Z57S0DTMHKDYrAZUvw7xaFdsxT1Ce3fp8IEmfRHnZxL/exec';
-// Ejemplo: const SHEET_URL = 'https://script.google.com/macros/s/XXXX/exec';
 // ============================================================
 
 const QUESTIONS = [
@@ -272,18 +293,27 @@ const QUESTIONS = [
 const CONCERN_MAP = { A:'Brillos / poros', B:'Granitos / imperfecciones', C:'Sequedad / tirantez', D:'Rojeces / sensibilidad', E:'Manchas / luminosidad', F:'Arrugas / expresión', G:'Textura irregular', H:'Ojeras / bolsas' };
 
 let current = 0, answers = {}, userName = '';
-
 let userEmail = '', userPhone = '', userDob = '', userDni = '', userAddress = '', userCity = '';
+let userGender = ''; // ← NUEVO
+
+// ── Selección de género ──
+function selectGender(btn) {
+  document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  userGender = btn.dataset.value;
+  validateIntro();
+}
 
 function validateIntro() {
-  const name = document.getElementById('name-input').value.trim();
-  const email = document.getElementById('email-input').value.trim();
-  const dob = document.getElementById('dob-input').value.trim();
+  const name    = document.getElementById('name-input').value.trim();
+  const email   = document.getElementById('email-input').value.trim();
+  const dob     = document.getElementById('dob-input').value.trim();
   const address = document.getElementById('address-input').value.trim();
-  const city = document.getElementById('city-input').value.trim();
+  const city    = document.getElementById('city-input').value.trim();
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const emailError = document.getElementById('email-error');
+  const consent = document.getElementById('consent-check').checked;
 
+  const emailError = document.getElementById('email-error');
   if (email.length > 0 && !emailOk) {
     emailError.style.display = 'block';
     document.getElementById('email-input').classList.add('error');
@@ -292,9 +322,17 @@ function validateIntro() {
     document.getElementById('email-input').classList.remove('error');
   }
 
-  const consent = document.getElementById('consent-check').checked;
-
-  document.getElementById('btn-start').disabled = !(name.length >= 2 && emailOk && dob && address.length >= 5 && city.length >= 2 && consent);
+  // Botón activo solo cuando todos los campos obligatorios están rellenos,
+  // incluido el género (userGender !== '')
+  document.getElementById('btn-start').disabled = !(
+    name.length >= 2 &&
+    emailOk &&
+    dob &&
+    address.length >= 5 &&
+    city.length >= 2 &&
+    consent &&
+    userGender !== ''   // ← género obligatorio
+  );
 }
 
 document.getElementById('name-input').addEventListener('input', validateIntro);
@@ -311,13 +349,15 @@ document.getElementById('email-input').addEventListener('keydown', function(e) {
 });
 
 function startQuiz() {
-  userName = document.getElementById('name-input').value.trim();
-  userEmail = document.getElementById('email-input').value.trim();
-  userPhone = document.getElementById('phone-input').value.trim();
-  userDob = document.getElementById('dob-input').value;
-  userDni = document.getElementById('dni-input').value.trim();
+  userName    = document.getElementById('name-input').value.trim();
+  userEmail   = document.getElementById('email-input').value.trim();
+  userPhone   = document.getElementById('phone-input').value.trim();
+  userDob     = document.getElementById('dob-input').value;
+  userDni     = document.getElementById('dni-input').value.trim();
   userAddress = document.getElementById('address-input').value.trim();
-  userCity = document.getElementById('city-input').value.trim();
+  userCity    = document.getElementById('city-input').value.trim();
+  // userGender ya está asignado por selectGender()
+
   document.getElementById('screen-intro').classList.remove('active');
   document.getElementById('progress-wrap').style.display = 'block';
   document.getElementById('screen-quiz').classList.add('active');
@@ -384,34 +424,6 @@ function getSkinType(a) {
   return { main, isSensitive, dehydrated };
 }
 function skinLabel(t) { return {dry:'Piel seca',oily:'Piel grasa',mixed:'Piel mixta',normal:'Piel normal'}[t]||'Piel normal'; }
-function skinDesc(t, isSensitive, dehydrated) {
-  const base = {
-    dry: 'Tu piel tiende a ser seca: nota tirantez con facilidad, brilla poco y los poros son pequeños. Necesita hidratación y nutrición constante.',
-    oily: 'Tu piel tiene tendencia grasa: brilla con frecuencia, los poros son más visibles y pueden aparecer imperfecciones. El truco está en equilibrar sin resecar.',
-    mixed: 'Tu piel es mixta: la zona T (frente, nariz, barbilla) tiende al brillo, mientras que las mejillas están más normales o algo secas. ¡Muy común!',
-    normal: 'Tu piel es bastante equilibrada: sin grandes brillos ni sequedad, y reacciona bien a la mayoría de productos. El objetivo es mantener ese equilibrio.',
-  }[t]||'';
-  let extra = '';
-  if (isSensitive) extra += ' Además, tu piel es reactiva o sensible — conviene priorizar fórmulas suaves y presentar los productos nuevos poco a poco.';
-  if (dehydrated) extra += ' También puede que tu piel esté deshidratada (le falta agua aunque no le falte grasa), algo muy habitual que muchas veces no relacionamos con la hidratación.';
-  return base + extra;
-}
-function buildWA(a, name) {
-  const { main, isSensitive, dehydrated } = getSkinType(a);
-  const concerns = Array.isArray(a.concerns) ? a.concerns.filter(c=>c!=='I').map(c=>CONCERN_MAP[c]) : [];
-  let skinPhrase = skinLabel(main).toLowerCase();
-  if (isSensitive) skinPhrase += ' y sensible';
-  if (dehydrated) skinPhrase += ', con tendencia a deshidratarse';
-  let text = 'Hola ' + name + '! 🌿\n\nHe leído tus respuestas y me parece que tienes una ' + skinPhrase + '.';
-  if (concerns.length) text += '\n\nLas cosas que más te preocupan son: ' + concerns.join(', ') + '.';
-  text += '\n\nPara el taller tengo algo pensado para ti';
-  if (main==='dry') text += ' — ya verás que la sensación de tirantez puede mejorar mucho con la hidratación adecuada';
-  if (main==='oily') text += ' — hay opciones que equilibran sin resecar ni tapar los poros';
-  if (main==='mixed') text += ' — hay cosas que funcionan muy bien para pieles como la tuya sin necesitar mil productos';
-  if (main==='normal') text += ' — con una piel así el objetivo es mimar y mantener ese equilibrio';
-  text += '.\n\n¡Nos vemos pronto! 💚';
-  return text;
-}
 
 function saveToSheet(data, destino) {
   if (!SHEET_URL) {
@@ -442,48 +454,49 @@ function showResult() {
   document.getElementById('screen-result').classList.add('active');
   window.scrollTo(0,0);
 
-  // Mostrar nombre en el mensaje de agradecimiento
   document.getElementById('thankyou-name').textContent = userName;
 
-  // Calcular tipo de piel internamente (no se muestra, se guarda en Sheets)
   const skinResult = getSkinType(answers);
 
-  // Guardar datos de cliente en hoja Clientes
+  // Guardar en hoja Clientes — incluye género
   saveToSheet({
-    timestamp: new Date().toLocaleString('es-ES'),
-    nombre: userName,
-    email: userEmail,
-    telefono: userPhone || '—',
-    fecha_nacimiento: userDob || '—',
-    dni: userDni || '—',
-    direccion: userAddress || '—',
-    ciudad: userCity || '—'
+    timestamp:        new Date().toLocaleString('es-ES'),
+    nombre:           userName,
+    genero:           userGender,           // ← NUEVO
+    email:            userEmail,
+    telefono:         userPhone || '—',
+    fecha_nacimiento: userDob   || '—',
+    dni:              userDni   || '—',
+    direccion:        userAddress || '—',
+    ciudad:           userCity  || '—'
   }, 'clientes');
 
-  // Guardar cuestionario de piel en hoja TipoPiel
+  // Guardar en hoja TipoPiel — incluye género para el motor de recomendación
   saveToSheet({
-    timestamp: new Date().toLocaleString('es-ES'),
-    nombre: userName,
-    email: userEmail,
-    tipo_piel: skinLabel(skinResult.main),
-    sensible: skinResult.isSensitive ? 'Sí' : 'No',
-    deshidratada: skinResult.dehydrated ? 'Sí' : 'No',
-    preocupaciones: (answers.concerns||[]).filter(c=>c!=='I').map(c=>CONCERN_MAP[c]).join(', ') || '—',
-    resp_manana: answers.morning||'',
-    resp_brillo: answers.shine||'',
-    resp_tirantez: answers.tight||'',
-    resp_reaccion: answers.reaction||'',
-    resp_poros: answers.pores||'',
-    resp_granitos: answers.spots||'',
-    resp_final_dia: answers.endofday||'',
-    resp_hidratante: answers.moisturizer||'',
-    resp_edad: answers.age||''
+    timestamp:       new Date().toLocaleString('es-ES'),
+    nombre:          userName,
+    genero:          userGender,            // ← NUEVO
+    email:           userEmail,
+    tipo_piel:       skinLabel(skinResult.main),
+    sensible:        skinResult.isSensitive ? 'Sí' : 'No',
+    deshidratada:    skinResult.dehydrated  ? 'Sí' : 'No',
+    preocupaciones:  (answers.concerns||[]).filter(c=>c!=='I').map(c=>CONCERN_MAP[c]).join(', ') || '—',
+    resp_manana:     answers.morning    || '',
+    resp_brillo:     answers.shine      || '',
+    resp_tirantez:   answers.tight      || '',
+    resp_reaccion:   answers.reaction   || '',
+    resp_poros:      answers.pores      || '',
+    resp_granitos:   answers.spots      || '',
+    resp_final_dia:  answers.endofday   || '',
+    resp_hidratante: answers.moisturizer|| '',
+    resp_edad:       answers.age        || ''
   }, 'tipopiel');
 }
 
 function restart() {
   current=0; answers={}; userName=''; userEmail=''; userPhone='';
   userDob=''; userDni=''; userAddress=''; userCity='';
+  userGender = '';  // ← NUEVO
   document.getElementById('screen-result').classList.remove('active');
   document.getElementById('setup-banner').style.display='none';
   document.getElementById('name-input').value='';
@@ -495,6 +508,8 @@ function restart() {
   document.getElementById('city-input').value='';
   document.getElementById('consent-check').checked=false;
   document.getElementById('btn-start').disabled=true;
+  // Resetear botones de género
+  document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('screen-intro').classList.add('active');
   window.scrollTo(0,0);
 }
