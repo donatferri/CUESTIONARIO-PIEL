@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Añadir cliente · RINGANA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde:    #3a5a40;
+      --verde-lg: #e8f0e9;
+      --arena:    #f7f4ef;
+      --texto:    #1c1c1c;
+      --gris:     #6b7280;
+      --borde:    #d1cfc9;
+      --error:    #b94a4a;
+      --ok:       #3a5a40;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--arena);
+      color: var(--texto);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    header .eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--verde);
+      margin-bottom: 0.5rem;
+    }
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 500;
+      color: var(--texto);
+      line-height: 1.15;
+    }
+    header p {
+      font-size: 0.85rem;
+      color: var(--gris);
+      margin-top: 0.5rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: clamp(1.5rem, 5vw, 2.5rem);
+      width: 100%;
+      max-width: 520px;
+    }
+
+    /* ── Sección ── */
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--verde);
+      border-bottom: 1px solid var(--verde-lg);
+      padding-bottom: 0.4rem;
+      margin: 1.6rem 0 1.1rem;
+    }
+    .section-label:first-of-type { margin-top: 0; }
+
+    /* ── Campo ── */
+    .field { margin-bottom: 1.1rem; }
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--texto);
+      margin-bottom: 0.35rem;
+    }
+    .field label span.opt {
+      font-weight: 400;
+      color: var(--gris);
+      font-size: 0.72rem;
+      margin-left: 0.3rem;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--texto);
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.2rem;
+      cursor: pointer;
+    }
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--verde);
+      box-shadow: 0 0 0 3px rgba(58, 90, 64, 0.08);
+    }
+    .field input.invalid { border-color: var(--error); }
+
+    /* Fila de dos columnas */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+    /* ── Botón ── */
+    .btn-wrap { margin-top: 2rem; }
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--verde);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button[type="submit"]:hover  { background: #2e4832; }
+    button[type="submit"]:active { transform: scale(0.98); }
+    button[type="submit"]:disabled {
+      background: var(--borde);
+      cursor: not-allowed;
+    }
+
+    /* ── Estados ── */
+    #estado {
+      margin-top: 1.1rem;
+      font-size: 0.82rem;
+      text-align: center;
+      min-height: 1.2rem;
+    }
+    .msg-ok    { color: var(--ok);    font-weight: 500; }
+    .msg-error { color: var(--error); font-weight: 500; }
+    .msg-cargando { color: var(--gris); }
+
+    /* ── Spinner ── */
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Nuevo cliente ── */
+    #btn-nuevo {
+      display: none;
+      width: 100%;
+      margin-top: 0.7rem;
+      padding: 0.7rem;
+      background: transparent;
+      color: var(--verde);
+      border: 1.5px solid var(--verde);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #btn-nuevo:hover { background: var(--verde-lg); }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.72rem;
+      color: var(--borde);
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">RINGANA · Gestión de clientes</p>
+  <h1>Añadir cliente</h1>
+  <p>Uso interno · Los datos se guardan directamente en tu hoja de cálculo</p>
+</header>
+
+<div class="card">
+  <form id="form-cliente" novalidate>
+
+    <p class="section-label">Datos personales</p>
+
+    <div class="field">
+      <label for="nombre">Nombre completo</label>
+      <input id="nombre" name="nombre" type="text" placeholder="Ana García López" autocomplete="name" required />
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="ana@email.com" autocomplete="email" required />
+    </div>
+
+    <div class="row-2">
+      <div class="field">
+        <label for="telefono">Teléfono <span class="opt">opcional</span></label>
+        <input id="telefono" name="telefono" type="tel" placeholder="612 345 678" autocomplete="tel" />
+      </div>
+      <div class="field">
+        <label for="genero">Género <span class="opt">opcional</span></label>
+        <select id="genero" name="genero">
+          <option value="">— Seleccionar —</option>
+          <option value="Mujer">Mujer</option>
+          <option value="Hombre">Hombre</option>
+          <option value="Prefiero no decir">Prefiero no decir</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="section-label">Identificación</p>
+
+    <div class="row-2">
+      <div class="field">
+        <label for="dni">DNI / NIE <span class="opt">opcional</span></label>
+        <input id="dni" name="dni" type="text" placeholder="12345678A" />
+      </div>
+      <div class="field">
+        <label for="fecha_nacimiento">Fecha de nacimiento <span class="opt">opcional</span></label>
+        <input id="fecha_nacimiento" name="fecha_nacimiento" type="date" />
+      </div>
+    </div>
+
+    <p class="section-label">Dirección</p>
+
+    <div class="field">
+      <label for="direccion">Dirección <span class="opt">opcional</span></label>
+      <input id="direccion" name="direccion" type="text" placeholder="Calle Mayor 12, 3ºA" autocomplete="street-address" />
+    </div>
+
+    <div class="field">
+      <label for="ciudad">Ciudad <span class="opt">opcional</span></label>
+      <input id="ciudad" name="ciudad" type="text" placeholder="Madrid" autocomplete="address-level2" />
+    </div>
+
+    <div class="btn-wrap">
+      <button type="submit" id="btn-enviar">Guardar cliente</button>
+      <button type="button" id="btn-nuevo">+ Añadir otro cliente</button>
+      <p id="estado"></p>
+    </div>
+
+  </form>
+</div>
+
+<footer>Solo para uso del partner · RINGANA</footer>
+
+<script>
+  // ─── CONFIGURA AQUÍ tu URL de Apps Script ───────────────────────────
+  const SHEET_URL = 'PEGA_AQUÍ_LA_URL_DE_TU_APPS_SCRIPT';
+  // ────────────────────────────────────────────────────────────────────
+
+  const form    = document.getElementById('form-cliente');
+  const btnEnv  = document.getElementById('btn-enviar');
+  const btnNuevo= document.getElementById('btn-nuevo');
+  const estado  = document.getElementById('estado');
+
+  function setEstado(tipo, msg) {
+    estado.innerHTML = msg;
+    estado.className = tipo === 'ok' ? 'msg-ok' : tipo === 'error' ? 'msg-error' : 'msg-cargando';
+  }
+
+  function resetForm() {
+    form.reset();
+    estado.innerHTML = '';
+    btnEnv.disabled  = false;
+    btnEnv.innerHTML = 'Guardar cliente';
+    btnNuevo.style.display = 'none';
+    document.getElementById('nombre').focus();
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Validación básica
+    const nombre = document.getElementById('nombre').value.trim();
+    const email  = document.getElementById('email').value.trim();
+    let valid = true;
+
+    ['nombre', 'email'].forEach(id => {
+      document.getElementById(id).classList.remove('invalid');
+    });
+
+    if (!nombre) {
+      document.getElementById('nombre').classList.add('invalid');
+      valid = false;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById('email').classList.add('invalid');
+      valid = false;
+    }
+    if (!valid) {
+      setEstado('error', 'Por favor, revisa los campos marcados en rojo.');
+      return;
+    }
+
+    // Envío
+    btnEnv.disabled = true;
+    btnEnv.innerHTML = '<span class="spinner"></span>Guardando…';
+    setEstado('cargando', '');
+
+    const payload = {
+      _hoja:            'clientes_manual',
+      timestamp:        new Date().toISOString(),
+      nombre:           nombre,
+      email:            email,
+      telefono:         document.getElementById('telefono').value.trim(),
+      genero:           document.getElementById('genero').value,
+      dni:              document.getElementById('dni').value.trim(),
+      fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+      direccion:        document.getElementById('direccion').value.trim(),
+      ciudad:           document.getElementById('ciudad').value.trim(),
+    };
+
+    try {
+      const res  = await fetch(SHEET_URL, {
+        method: 'POST',
+        body:   JSON.stringify(payload),
+      });
+      const json = await res.json();
+
+      if (json.status === 'ok') {
+        btnEnv.innerHTML = '✓ Guardado';
+        setEstado('ok', `✓ <strong>${nombre}</strong> añadido correctamente.`);
+        btnNuevo.style.display = 'block';
+      } else {
+        throw new Error(json.message || 'Error desconocido');
+      }
+    } catch (err) {
+      btnEnv.disabled  = false;
+      btnEnv.innerHTML = 'Guardar cliente';
+      setEstado('error', '✗ Error al guardar. Comprueba la URL del script y vuelve a intentarlo.');
+      console.error(err);
+    }
+  });
+
+  btnNuevo.addEventListener('click', resetForm);
+</script>
+</body>
+</html>
