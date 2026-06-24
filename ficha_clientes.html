@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fichas de Clientes · RINGANA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap');
+
+  :root {
+    --verde:     #2D6A4F;
+    --verde-lg:  #52B788;
+    --crema:     #F7F4EE;
+    --arena:     #E8E0D0;
+    --carbon:    #1A1A1A;
+    --gris:      #6B6B6B;
+    --gris-l:    #BCBCBC;
+    --blanco:    #FFFFFF;
+
+    /* Tipos de piel */
+    --seca-bg:   #EAF0FF;  --seca-dot:   #4A7BF7;  --seca-txt:   #1A3A8F;
+    --normal-bg: #E6F7EF;  --normal-dot: #2D9E64;  --normal-txt: #1A5E3A;
+    --mixta-bg:  #FFF8E1;  --mixta-dot:  #F5A623;  --mixta-txt:  #7A4F00;
+    --grasa-bg:  #FDECEA;  --grasa-dot:  #E53935;  --grasa-txt:  #7F1D1D;
+    --sensible-bg:#FFF0E6; --sensible-dot:#F46B20; --sensible-txt:#7A2D00;
+
+    --radius: 14px;
+    --shadow: 0 2px 12px rgba(0,0,0,.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--crema);
+    color: var(--carbon);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--verde);
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo {
+    width: 32px; height: 32px;
+    background: var(--verde-lg);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    color: white;
+    font-size: 16px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    color: white;
+    font-size: 20px;
+    font-weight: 400;
+  }
+  .header-nav {
+    display: flex; gap: 8px;
+  }
+  .btn-nav {
+    background: rgba(255,255,255,.15);
+    color: white;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .15s;
+  }
+  .btn-nav:hover { background: rgba(255,255,255,.25); }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    padding: 20px 28px 0;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 380px;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border: 1.5px solid var(--arena);
+    border-radius: 10px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .search-wrap input:focus { border-color: var(--verde-lg); }
+  .search-icon {
+    position: absolute; left: 13px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gris-l); font-size: 15px; pointer-events: none;
+  }
+  .filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--arena);
+    background: white;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex; align-items: center; gap: 6px;
+    font-weight: 500;
+  }
+  .filter-btn.active, .filter-btn:hover { border-color: var(--verde); color: var(--verde); background: #F0F7F4; }
+  .filter-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  .stats-bar {
+    padding: 16px 28px 0;
+    display: flex; gap: 20px;
+    font-size: 13px; color: var(--gris);
+  }
+  .stats-bar strong { color: var(--carbon); }
+
+  /* ── GRID DE FICHAS ── */
+  .grid {
+    padding: 20px 28px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  /* ── FICHA ── */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform .15s, box-shadow .15s;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,.1);
+    border-color: var(--arena);
+  }
+  .card.expanded { border-color: var(--verde-lg); }
+
+  .card-header {
+    padding: 16px 18px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .avatar {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .card-name-block { flex: 1; min-width: 0; }
+  .card-name {
+    font-size: 15px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-email {
+    font-size: 12px; color: var(--gris);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-meta { font-size: 11px; color: var(--gris-l); margin-top: 2px; }
+
+  /* Badge tipo piel */
+  .skin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    margin-top: 8px;
+  }
+  .skin-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .skin-seca      { background: var(--seca-bg);     color: var(--seca-txt); }
+  .skin-seca .dot { background: var(--seca-dot); }
+  .skin-normal      { background: var(--normal-bg);   color: var(--normal-txt); }
+  .skin-normal .dot { background: var(--normal-dot); }
+  .skin-mixta      { background: var(--mixta-bg);    color: var(--mixta-txt); }
+  .skin-mixta .dot { background: var(--mixta-dot); }
+  .skin-grasa      { background: var(--grasa-bg);    color: var(--grasa-txt); }
+  .skin-grasa .dot { background: var(--grasa-dot); }
+  .skin-sensible      { background: var(--sensible-bg); color: var(--sensible-txt); }
+  .skin-sensible .dot { background: var(--sensible-dot); }
+
+  /* Tags de preocupaciones */
+  .concerns {
+    padding: 0 18px 14px;
+    display: flex; flex-wrap: wrap; gap: 5px;
+  }
+  .tag {
+    background: var(--crema);
+    border: 1px solid var(--arena);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: var(--gris);
+  }
+
+  /* Divisor y expand */
+  .card-divider { height: 1px; background: var(--arena); margin: 0 18px; }
+
+  .card-quick {
+    padding: 12px 18px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .btn-action {
+    flex: 1;
+    padding: 8px 0;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+    text-align: center;
+  }
+  .btn-primary {
+    background: var(--verde);
+    color: white;
+  }
+  .btn-primary:hover { background: #245A41; }
+  .btn-secondary {
+    background: var(--crema);
+    color: var(--gris);
+    border: 1.5px solid var(--arena);
+  }
+  .btn-secondary:hover { border-color: var(--verde-lg); color: var(--verde); }
+
+  .expand-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gris-l);
+    font-size: 18px;
+    padding: 4px;
+    line-height: 1;
+    transition: color .15s, transform .2s;
+  }
+  .expand-btn.open { transform: rotate(180deg); color: var(--verde); }
+
+  /* ── DETALLE EXPANDIDO ── */
+  .card-detail {
+    display: none;
+    padding: 0 18px 18px;
+  }
+  .card-detail.open { display: block; }
+  .detail-section { margin-top: 14px; }
+  .detail-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gris-l);
+    margin-bottom: 8px;
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .detail-item {
+    background: var(--crema);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .detail-item label {
+    font-size: 10px;
+    color: var(--gris);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .detail-item span {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .answer-row {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--crema);
+    font-size: 12.5px;
+  }
+  .answer-row:last-child { border-bottom: none; }
+  .answer-label { color: var(--gris); }
+  .answer-val { font-weight: 500; color: var(--carbon); }
+  .answer-val.yes { color: var(--verde); }
+  .answer-val.no  { color: var(--gris-l); }
+
+  /* ── ESTADO EMAIL ── */
+  .email-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 500; padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .email-sent   { background: #E6F7EF; color: #1A5E3A; }
+  .email-pending{ background: #FFF8E1; color: #7A4F00; }
+
+  /* ── EMPTY / LOADING ── */
+  .state-center {
+    grid-column: 1 / -1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 80px 20px;
+    color: var(--gris);
+    gap: 12px;
+  }
+  .state-center svg { opacity: .3; }
+  .state-center p { font-size: 15px; }
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--arena);
+    border-top-color: var(--verde);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── CONFIG PANEL ── */
+  .config-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .config-overlay.open { display: flex; }
+  .config-panel {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    width: 380px;
+    max-width: 95vw;
+  }
+  .config-panel h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  .config-panel p { font-size: 13px; color: var(--gris); margin-bottom: 20px; }
+  .config-panel label { font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px; }
+  .config-panel input {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--arena);
+    border-radius: 9px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    margin-bottom: 16px;
+    outline: none;
+  }
+  .config-panel input:focus { border-color: var(--verde-lg); }
+  .config-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-cancel {
+    padding: 9px 18px; border-radius: 8px;
+    background: var(--crema); border: 1.5px solid var(--arena);
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer;
+  }
+  .btn-save {
+    padding: 9px 22px; border-radius: 8px;
+    background: var(--verde); color: white; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-save:hover { background: #245A41; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">R</div>
+    <h1>Fichas de Clientes</h1>
+  </div>
+  <nav class="header-nav">
+    <a href="menu.html" class="btn-nav">← Menú</a>
+    <button class="btn-nav" onclick="openConfig()">⚙ Configurar</button>
+    <button class="btn-nav" onclick="loadData()">↻ Actualizar</button>
+  </nav>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Buscar por nombre o email…" oninput="applyFilters()">
+  </div>
+  <div class="filter-btns">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">Todas</button>
+    <button class="filter-btn" data-filter="seca" onclick="setFilter('seca',this)">
+      <span class="filter-dot" style="background:var(--seca-dot)"></span>Seca
+    </button>
+    <button class="filter-btn" data-filter="normal" onclick="setFilter('normal',this)">
+      <span class="filter-dot" style="background:var(--normal-dot)"></span>Normal
+    </button>
+    <button class="filter-btn" data-filter="mixta" onclick="setFilter('mixta',this)">
+      <span class="filter-dot" style="background:var(--mixta-dot)"></span>Mixta
+    </button>
+    <button class="filter-btn" data-filter="grasa" onclick="setFilter('grasa',this)">
+      <span class="filter-dot" style="background:var(--grasa-dot)"></span>Grasa
+    </button>
+    <button class="filter-btn" data-filter="sensible" onclick="setFilter('sensible',this)">
+      <span class="filter-dot" style="background:var(--sensible-dot)"></span>Sensible
+    </button>
+    <button class="filter-btn" data-filter="pending" onclick="setFilter('pending',this)">⏳ Pendiente email</button>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <span>Total: <strong id="statTotal">—</strong></span>
+  <span>Email pendiente: <strong id="statPending">—</strong></span>
+  <span>Email enviado: <strong id="statSent">—</strong></span>
+</div>
+
+<!-- GRID -->
+<div class="grid" id="grid">
+  <div class="state-center">
+    <div class="spinner"></div>
+    <p>Cargando fichas…</p>
+  </div>
+</div>
+
+<!-- CONFIG PANEL -->
+<div class="config-overlay" id="configOverlay" onclick="closeConfigIfOutside(event)">
+  <div class="config-panel">
+    <h2>Configuración</h2>
+    <p>ID de tu Google Sheet (lo encuentras en la URL del archivo)</p>
+    <label>Sheet ID</label>
+    <input type="text" id="cfgSheetId" placeholder="1JSxxNNamg7wML4wGKzWW_24_T9xMFTWcc7rk1eNsrZM">
+    <label>Hoja Clientes</label>
+    <input type="text" id="cfgSheetClientes" placeholder="Clientes">
+    <label>Hoja Tipo de Piel</label>
+    <input type="text" id="cfgSheetPiel" placeholder="TipoPiel">
+    <label>Hoja Recomendaciones (para estado email)</label>
+    <input type="text" id="cfgSheetReco" placeholder="Recomendaciones">
+    <div class="config-actions">
+      <button class="btn-cancel" onclick="closeConfig()">Cancelar</button>
+      <button class="btn-save" onclick="saveConfig()">Guardar y cargar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIGURACIÓN ────────────────────────────────────────────────
+const CONFIG_KEY = 'ringana_ficha_config';
+let cfg = JSON.parse(localStorage.getItem(CONFIG_KEY) || 'null') || {
+  sheetId:   '1JSxxNNamg7wML4wGKzWW_24_T9xMFTWcc7rk1eNsrZM',
+  clientes:  'Clientes',
+  piel:      'TipoPiel',
+  reco:      'Recomendaciones'
+};
+
+function saveConfig() {
+  cfg.sheetId  = document.getElementById('cfgSheetId').value.trim()   || cfg.sheetId;
+  cfg.clientes = document.getElementById('cfgSheetClientes').value.trim() || 'Clientes';
+  cfg.piel     = document.getElementById('cfgSheetPiel').value.trim()  || 'TipoPiel';
+  cfg.reco     = document.getElementById('cfgSheetReco').value.trim()  || 'Recomendaciones';
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+  closeConfig(); loadData();
+}
+function openConfig() {
+  document.getElementById('cfgSheetId').value       = cfg.sheetId;
+  document.getElementById('cfgSheetClientes').value = cfg.clientes;
+  document.getElementById('cfgSheetPiel').value     = cfg.piel;
+  document.getElementById('cfgSheetReco').value     = cfg.reco;
+  document.getElementById('configOverlay').classList.add('open');
+}
+function closeConfig()  { document.getElementById('configOverlay').classList.remove('open'); }
+function closeConfigIfOutside(e) { if(e.target===document.getElementById('configOverlay')) closeConfig(); }
+
+// ─── FETCH SHEET ─────────────────────────────────────────────────
+function sheetUrl(sheetName) {
+  return `https://docs.google.com/spreadsheets/d/${cfg.sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+}
+async function fetchSheet(sheetName) {
+  const res = await fetch(sheetUrl(sheetName));
+  const text = await res.text();
+  const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+  const cols = json.table.cols.map(c => c.label);
+  const rows = json.table.rows.map(r =>
+    Object.fromEntries(cols.map((c,i) => [c, r.c[i]?.v ?? '']))
+  );
+  return rows;
+}
+
+// ─── NORMALIZACIÓN ────────────────────────────────────────────────
+const normalize = s => (s||'').toLowerCase().trim().replace(/\s+/g,' ');
+
+function normEmail(s) { return (s||'').toLowerCase().trim(); }
+
+function skinClass(tipo) {
+  const t = normalize(tipo);
+  if (t.includes('seca') || t.includes('muy seca')) return 'seca';
+  if (t.includes('normal') || t.includes('equilibrada')) return 'normal';
+  if (t.includes('mixta')) return 'mixta';
+  if (t.includes('grasa') || t.includes('acne')) return 'grasa';
+  if (t.includes('sensible')) return 'sensible';
+  return 'normal';
+}
+function skinLabel(cls) {
+  return {seca:'Piel Seca',normal:'Piel Normal',mixta:'Piel Mixta',grasa:'Piel Grasa',sensible:'Piel Sensible'}[cls] || cls;
+}
+function avatarColor(cls) {
+  return {seca:'#4A7BF7',normal:'#2D9E64',mixta:'#F5A623',grasa:'#E53935',sensible:'#F46B20'}[cls]||'#888';
+}
+function initials(name) {
+  return (name||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
+}
+
+// ─── ESTADO GLOBAL ────────────────────────────────────────────────
+let allClients = [];
+let activeFilter = 'all';
+
+// ─── LOAD DATA ────────────────────────────────────────────────────
+async function loadData() {
+  showLoading();
+  try {
+    const [clientes, piel, reco] = await Promise.all([
+      fetchSheet(cfg.clientes),
+      fetchSheet(cfg.piel),
+      fetchSheet(cfg.reco).catch(() => [])
+    ]);
+
+    // Índice piel por email
+    const pielMap = {};
+    piel.forEach(r => { if(r.Email) pielMap[normEmail(r.Email)] = r; });
+
+    // Índice reco (email enviado)
+    const recoSet = new Set();
+    reco.forEach(r => { if(r.Email) recoSet.add(normEmail(r.Email)); });
+
+    allClients = clientes.map(c => {
+      const email = normEmail(c.Email);
+      const p = pielMap[email] || {};
+      const cls = skinClass(p['Tipo de piel'] || '');
+      return {
+        // Clientes
+        fecha:     c.Fecha || '',
+        nombre:    c.Nombre || c['Nombre '] || '',
+        genero:    c['Género'] || '',
+        email:     c.Email || '',
+        telefono:  c['Teléfono'] || '',
+        fnac:      c['Fecha nacimiento'] || '',
+        ciudad:    c.Ciudad || '',
+        // TipoPiel
+        tipoPiel:  p['Tipo de piel'] || '',
+        sensible:  p.Sensible || '',
+        deshidrat: p.Deshidratada || '',
+        preocupaciones: p.Preocupaciones || '',
+        manana:    p['Mañana'] || '',
+        brillo:    p.Brillo || '',
+        tirantez:  p.Tirantez || '',
+        reaccion:  p['Reacción'] || p['Reaccion'] || '',
+        poros:     p.Poros || '',
+        granitos:  p.Granitos || '',
+        finalDia:  p['Final día'] || p['Final dia'] || '',
+        hidratante:p.Hidratante || '',
+        edad:      p.Edad || '',
+        // Derivados
+        skinCls:   cls,
+        emailSent: recoSet.has(email),
+        hasPiel:   !!p['Tipo de piel']
+      };
+    });
+
+    applyFilters();
+  } catch(err) {
+    showError(err);
+  }
+}
+
+function showLoading() {
+  document.getElementById('grid').innerHTML = `
+    <div class="state-center">
+      <div class="spinner"></div>
+      <p>Cargando fichas…</p>
+    </div>`;
+}
+function showError(err) {
+  document.getElementById('grid').innerHTML = `
+    <div class="state-center">
+      <p>⚠️ Error al cargar los datos. Comprueba el ID del Sheet y que sea público.</p>
+      <p style="font-size:12px;color:#aaa">${err.message||''}</p>
+      <button class="btn-action btn-secondary" style="flex:none;padding:9px 20px;margin-top:10px" onclick="openConfig()">Configurar Sheet</button>
+    </div>`;
+}
+
+// ─── FILTROS ─────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = normalize(document.getElementById('searchInput').value);
+  let list = allClients;
+
+  if (activeFilter !== 'all') {
+    if (activeFilter === 'pending') {
+      list = list.filter(c => !c.emailSent);
+    } else {
+      list = list.filter(c => c.skinCls === activeFilter);
+    }
+  }
+  if (q) {
+    list = list.filter(c =>
+      normalize(c.nombre).includes(q) ||
+      normEmail(c.email).includes(q) ||
+      normalize(c.ciudad).includes(q)
+    );
+  }
+
+  renderGrid(list);
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────
+function renderGrid(list) {
+  const total   = allClients.length;
+  const pending = allClients.filter(c => !c.emailSent).length;
+  const sent    = allClients.filter(c => c.emailSent).length;
+  document.getElementById('statTotal').textContent   = total;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statSent').textContent    = sent;
+
+  if (!list.length) {
+    document.getElementById('grid').innerHTML = `
+      <div class="state-center">
+        <p>No hay clientes que coincidan con el filtro.</p>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('grid').innerHTML = list.map((c,i) => cardHTML(c,i)).join('');
+}
+
+function boolLabel(val) {
+  const v = normalize(val);
+  if (!v || v === 'no' || v === 'false') return '<span class="answer-val no">No</span>';
+  return '<span class="answer-val yes">Sí</span>';
+}
+
+function preocupacionesTags(raw) {
+  if (!raw) return '';
+  return raw.split(/[,;\/]/).map(s=>s.trim()).filter(Boolean)
+    .map(s=>`<span class="tag">${s}</span>`).join('');
+}
+
+function cardHTML(c, i) {
+  const cls = c.skinCls;
+  const color = avatarColor(cls);
+  const label = skinLabel(cls);
+  const emailStatus = c.emailSent
+    ? `<span class="email-badge email-sent">✓ Email enviado</span>`
+    : `<span class="email-badge email-pending">⏳ Pendiente</span>`;
+
+  const tags = c.preocupaciones ? preocupacionesTags(c.preocupaciones) : '';
+
+  // Calcular edad aproximada si hay fecha nacimiento
+  let edadStr = c.edad || '';
+  if (!edadStr && c.fnac) {
+    const diff = new Date() - new Date(c.fnac);
+    const yrs = Math.floor(diff/3.156e10);
+    if (yrs > 0 && yrs < 120) edadStr = yrs + ' años';
+  }
+
+  return `
+<div class="card" id="card-${i}">
+  <div class="card-header" onclick="toggleCard(${i})">
+    <div class="avatar" style="background:${color}">${initials(c.nombre)}</div>
+    <div class="card-name-block">
+      <div class="card-name">${c.nombre || '(sin nombre)'}</div>
+      <div class="card-email">${c.email}</div>
+      <div class="card-meta">${c.ciudad ? c.ciudad + ' · ' : ''}${edadStr ? edadStr + ' · ' : ''}${c.genero || ''}</div>
+      ${c.hasPiel ? `<span class="skin-badge skin-${cls}"><span class="dot"></span>${label}</span>` : `<span class="skin-badge" style="background:#f0f0f0;color:#999"><span class="dot" style="background:#ccc"></span>Sin cuestionario</span>`}
+    </div>
+    <button class="expand-btn" id="expandbtn-${i}" aria-label="Ver detalle">▼</button>
+  </div>
+
+  ${tags ? `<div class="concerns">${tags}</div>` : ''}
+
+  <div class="card-divider"></div>
+
+  <div class="card-quick">
+    ${emailStatus}
+    <div style="flex:1"></div>
+    ${!c.emailSent ? `<button class="btn-action btn-primary" onclick="markSent(event,'${c.email}')">Enviar recomendación</button>` : ''}
+    <button class="btn-action btn-secondary" onclick="copyEmail(event,'${c.email}')">📋 Email</button>
+  </div>
+
+  <div class="card-detail" id="detail-${i}">
+    <div class="card-divider" style="margin:0"></div>
+
+    ${c.hasPiel ? `
+    <div class="detail-section">
+      <div class="detail-title">Perfil de piel</div>
+      <div class="answer-row"><span class="answer-label">Tipo de piel</span><span class="answer-val">${c.tipoPiel}</span></div>
+      <div class="answer-row"><span class="answer-label">Sensible</span>${boolLabel(c.sensible)}</div>
+      <div class="answer-row"><span class="answer-label">Deshidratada</span>${boolLabel(c.deshidrat)}</div>
+      <div class="answer-row"><span class="answer-label">Brillo a mediodía</span>${boolLabel(c.brillo)}</div>
+      <div class="answer-row"><span class="answer-label">Tirantez</span>${boolLabel(c.tirantez)}</div>
+      <div class="answer-row"><span class="answer-label">Reacción a cosméticos</span>${boolLabel(c.reaccion)}</div>
+      <div class="answer-row"><span class="answer-label">Poros visibles</span>${boolLabel(c.poros)}</div>
+      <div class="answer-row"><span class="answer-label">Granitos</span>${boolLabel(c.granitos)}</div>
+      ${c.manana ? `<div class="answer-row"><span class="answer-label">Por la mañana</span><span class="answer-val">${c.manana}</span></div>` : ''}
+      ${c.finalDia ? `<div class="answer-row"><span class="answer-label">Al final del día</span><span class="answer-val">${c.finalDia}</span></div>` : ''}
+      ${c.hidratante ? `<div class="answer-row"><span class="answer-label">Usa hidratante</span><span class="answer-val">${c.hidratante}</span></div>` : ''}
+    </div>` : '<div class="detail-section"><p style="font-size:13px;color:var(--gris)">No ha completado el cuestionario de piel.</p></div>'}
+
+    <div class="detail-section">
+      <div class="detail-title">Datos de contacto</div>
+      <div class="detail-grid">
+        ${c.telefono ? `<div class="detail-item"><label>Teléfono</label><span>${c.telefono}</span></div>` : ''}
+        ${c.ciudad   ? `<div class="detail-item"><label>Ciudad</label><span>${c.ciudad}</span></div>`    : ''}
+        ${c.fecha    ? `<div class="detail-item"><label>Registro</label><span>${c.fecha}</span></div>`   : ''}
+        ${edadStr    ? `<div class="detail-item"><label>Edad</label><span>${edadStr}</span></div>`       : ''}
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+// ─── ACCIONES ─────────────────────────────────────────────────────
+function toggleCard(i) {
+  const detail = document.getElementById(`detail-${i}`);
+  const btn    = document.getElementById(`expandbtn-${i}`);
+  const card   = document.getElementById(`card-${i}`);
+  const open   = detail.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  card.classList.toggle('expanded', open);
+}
+
+function copyEmail(e, email) {
+  e.stopPropagation();
+  navigator.clipboard.writeText(email).then(() => {
+    const btn = e.target;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function markSent(e, email) {
+  e.stopPropagation();
+  // Abre directamente el motor de recomendación en Sheets (menú Recomendaciones)
+  // Aquí puedes enlazar a tu Apps Script web app o simplemente copiar el email
+  const url = `https://docs.google.com/spreadsheets/d/${cfg.sheetId}/edit`;
+  if(confirm(`¿Abrir Google Sheets para enviar la recomendación a ${email}?`)) {
+    window.open(url, '_blank');
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', loadData);
+</script>
+</body>
+</html>
