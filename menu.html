@@ -1,226 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel RINGANA · Victor</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel RINGANA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap');
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --verde:    #2D6A4F;
+    --verde-lg: #52B788;
+    --crema:    #F7F4EE;
+    --arena:    #E8E0D0;
+    --carbon:   #1A1A1A;
+    --gris:     #6B6B6B;
+    --gris-l:   #BCBCBC;
+  }
 
-    :root {
-      --verde:     #3a5a40;
-      --verde-mid: #4e7a56;
-      --verde-lg:  #e8f0e9;
-      --arena:     #f7f4ef;
-      --texto:     #1c1c1c;
-      --gris:      #6b7280;
-      --borde:     #d1cfc9;
-      --sombra:    rgba(58, 90, 64, 0.08);
-    }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--arena);
-      color: var(--texto);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.2rem;
-    }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--crema);
+    color: var(--carbon);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
 
-    /* ── Header ── */
-    header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-    .logo-mark {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 52px;
-      height: 52px;
-      background: var(--verde);
-      border-radius: 14px;
-      margin-bottom: 1.2rem;
-    }
-    .logo-mark svg { width: 26px; height: 26px; fill: #fff; }
+  /* ── HEADER ── */
+  .header {
+    background: var(--verde);
+    padding: 24px 28px 20px;
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+  }
+  .header-logo {
+    width: 40px; height: 40px;
+    background: var(--verde-lg);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .header-text h1 {
+    font-family: 'DM Serif Display', serif;
+    color: white;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+  .header-text p {
+    color: rgba(255,255,255,.6);
+    font-size: 13px;
+    margin-top: 2px;
+  }
 
-    header .eyebrow {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--verde);
-      margin-bottom: 0.4rem;
-    }
-    header h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 6vw, 3rem);
-      font-weight: 500;
-      line-height: 1.1;
-      color: var(--texto);
-    }
-    header p {
-      font-size: 0.83rem;
-      color: var(--gris);
-      margin-top: 0.5rem;
-    }
+  /* ── SECCIONES ── */
+  .section-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gris-l);
+    padding: 28px 24px 10px;
+  }
 
-    /* ── Grid de tarjetas ── */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-      width: 100%;
-      max-width: 780px;
-    }
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    padding: 0 20px;
+  }
 
-    /* ── Tarjeta ── */
-    .card {
-      background: #fff;
-      border: 1px solid var(--borde);
-      border-radius: 14px;
-      padding: 1.6rem 1.5rem 1.4rem;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      gap: 0.9rem;
-      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
-      cursor: pointer;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 28px var(--sombra);
-      border-color: var(--verde-mid);
-    }
-    .card:active { transform: translateY(-1px); }
+  /* ── CARD ── */
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 18px 18px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    border: 1.5px solid transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.09);
+    border-color: var(--arena);
+  }
+  .card:active { transform: translateY(0); }
 
-    .card-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: var(--verde-lg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: var(--verde);
-      fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
+  .card-icon {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    background: var(--crema);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--verde);
+  }
+  .card-icon svg {
+    width: 22px; height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
 
-    .card-body { flex: 1; }
-    .card-tag {
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--verde);
-      margin-bottom: 0.3rem;
-    }
-    .card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem;
-      font-weight: 500;
-      line-height: 1.2;
-      color: var(--texto);
-      margin-bottom: 0.3rem;
-    }
-    .card-desc {
-      font-size: 0.78rem;
-      color: var(--gris);
-      line-height: 1.5;
-    }
+  /* Variantes de color de icono */
+  .card.taller .card-icon  { background: #EAF7F0; color: var(--verde); }
+  .card.survey .card-icon  { background: #FFF3E0; color: #E07B00; }
+  .card.gestion .card-icon { background: #EEF2FF; color: #4458B8; }
+  .card.fichas .card-icon  { background: #FFF0FB; color: #9B2D7A; }
+  .card.reco .card-icon    { background: #F0FFF4; color: #1A6E3A; }
 
-    .card-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-    }
-    .card-arrow svg {
-      width: 16px;
-      height: 16px;
-      stroke: var(--borde);
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: stroke 0.15s, transform 0.15s;
-    }
-    .card:hover .card-arrow svg {
-      stroke: var(--verde);
-      transform: translateX(3px);
-    }
+  .card-body { flex: 1; min-width: 0; }
+  .card-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--gris-l);
+    margin-bottom: 2px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .card-desc {
+    font-size: 12px;
+    color: var(--gris);
+    line-height: 1.4;
+  }
 
-    /* ── Separador de sección ── */
-    .section-title {
-      width: 100%;
-      max-width: 780px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      color: var(--gris);
-      border-bottom: 1px solid var(--borde);
-      padding-bottom: 0.4rem;
-      margin: 2rem 0 0.8rem;
-    }
-    .section-title:first-of-type { margin-top: 0; }
+  .card-arrow {
+    color: var(--gris-l);
+    flex-shrink: 0;
+  }
+  .card-arrow svg {
+    width: 18px; height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .card:hover .card-arrow { color: var(--verde); }
 
-    footer {
-      margin-top: 3rem;
-      font-size: 0.7rem;
-      color: var(--borde);
-      letter-spacing: 0.05em;
-    }
-  </style>
+  /* Badge "nuevo" */
+  .badge-new {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--verde);
+    color: white;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--gris-l);
+    padding: 32px 20px 0;
+  }
+</style>
 </head>
 <body>
 
-<header>
-  <div class="logo-mark">
-    <!-- Hoja simple como icono -->
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2C6 2 3 8 3 12c0 5 4 10 9 10s9-5 9-10c0-4-1-7-4-9-1 3-3 5-5 5 2-3 2-5 0-6z"/>
-    </svg>
+<!-- HEADER -->
+<header class="header">
+  <div class="header-logo">R</div>
+  <div class="header-text">
+    <h1>Panel RINGANA</h1>
+    <p>Herramientas de gestión de talleres y clientes</p>
   </div>
-  <p class="eyebrow">RINGANA · Panel de acceso</p>
-  <h1>¿Qué quieres hacer?</h1>
-  <p>Uso exclusivo del partner · Solo tú tienes este enlace</p>
 </header>
 
 <!-- Sección: Talleres -->
 <p class="section-title">Talleres</p>
 <div class="grid">
 
-  <a class="card" href="index.html">
+  <a class="card taller" href="index.html">
     <div class="card-icon">
-      <!-- Icono: portapapeles / cuestionario -->
-      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
     </div>
     <div class="card-body">
       <p class="card-tag">Antes del taller</p>
       <p class="card-title">Cuestionario de piel</p>
-      <p class="card-desc">Las participantes rellenan sus datos personales y tipo de piel antes de la sesión.</p>
+      <p class="card-desc">Las participantes registran sus datos personales y tipo de piel antes de la sesión.</p>
     </div>
     <div class="card-arrow">
       <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
   </a>
 
-  <a class="card" href="taller-valoracion-ringana.html">
+  <a class="card survey" href="taller-valoracion-ringana.html">
     <div class="card-icon">
-      <!-- Icono: estrella / valoración -->
       <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     </div>
     <div class="card-body">
@@ -235,13 +225,27 @@
 
 </div>
 
-<!-- Sección: Gestión -->
+<!-- Sección: Gestión de clientes -->
 <p class="section-title">Gestión de clientes</p>
 <div class="grid">
 
-  <a class="card" href="añadir_cliente.html">
+  <a class="card fichas" href="ficha_clientes.html">
     <div class="card-icon">
-      <!-- Icono: persona + -->
+      <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M8 5V3m8 2V3M2 10h20"/><circle cx="8.5" cy="15" r="1.5"/><path d="M12 13h4m-4 3h4"/></svg>
+    </div>
+    <div class="card-body">
+      <p class="card-tag">Clientes</p>
+      <p class="card-title">Fichas de clientes</p>
+      <p class="card-desc">Consulta el perfil, tipo de piel y estado de cada clienta. Filtra y envía recomendaciones.</p>
+    </div>
+    <div class="card-arrow">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <span class="badge-new">Nuevo</span>
+  </a>
+
+  <a class="card gestion" href="añadir_cliente.html">
+    <div class="card-icon">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
     </div>
     <div class="card-body">
@@ -256,7 +260,27 @@
 
 </div>
 
-<footer>RINGANA · Panel privado</footer>
+<!-- Sección: Recomendaciones -->
+<p class="section-title">Recomendaciones</p>
+<div class="grid">
+
+  <a class="card reco" href="https://docs.google.com/spreadsheets/d/1JSxxNNamg7wML4wGKzWW_24_T9xMFTWcc7rk1eNsrZM/edit" target="_blank">
+    <div class="card-icon">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 8.18 8.18l.95-.96a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    </div>
+    <div class="card-body">
+      <p class="card-tag">Motor</p>
+      <p class="card-title">Enviar recomendaciones</p>
+      <p class="card-desc">Accede a Google Sheets para preparar y enviar los emails personalizados desde el menú.</p>
+    </div>
+    <div class="card-arrow">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  </a>
+
+</div>
+
+<footer>RINGANA · Panel privado · <a href="https://donatferri.github.io/CUESTIONARIO-PIEL/" style="color:inherit">donatferri.github.io</a></footer>
 
 </body>
 </html>
