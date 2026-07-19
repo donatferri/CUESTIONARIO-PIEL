@@ -410,30 +410,27 @@
         return;
       }
 
-      // Recogemos por separado los campos que se fusionan (para no perder info)
       const nombreVal    = document.getElementById('nombre').value.trim();
       const apellidosVal = document.getElementById('apellidos').value.trim();
-      const direccionVal = document.getElementById('direccion').value.trim();
-      const cpVal        = document.getElementById('codigo_postal').value.trim();
 
       const data = {
         // ── Contrato con Codigo.gs (nombres exactos que espera doPost) ──
         _hoja:            HOJA,
         timestamp:        new Date().toISOString(),
+        // Nombre = nombre + apellidos (para coherencia con las filas
+        // que vienen de los otros dos formularios, que no separan)
         nombre:           [nombreVal, apellidosVal].filter(Boolean).join(' '),
         genero:           document.getElementById('genero').value,
         email:            document.getElementById('email').value.trim(),
         telefono:         document.getElementById('telefono').value.trim(),
         fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
         dni:              document.getElementById('dni').value.trim().toUpperCase(),
-        direccion:        [direccionVal, cpVal].filter(Boolean).join(', '),
+        direccion:        document.getElementById('direccion').value.trim(),
         ciudad:           document.getElementById('ciudad').value.trim(),
 
-        // ── Campos extra: Codigo.gs los ignora hoy, pero llegan al script ──
-        // por si más adelante añades columnas Apellidos / CP / Provincia /
-        // País / Origen / Consentimiento a la hoja Clientes
+        // ── Columnas J-O de la hoja Clientes ──
         apellidos:        apellidosVal,
-        codigo_postal:    cpVal,
+        codigo_postal:    document.getElementById('codigo_postal').value.trim(),
         provincia:        document.getElementById('provincia').value.trim(),
         pais:             document.getElementById('pais').value.trim(),
         origen:           ORIGEN,
