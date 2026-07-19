@@ -363,8 +363,8 @@
     // (la misma que usa añadir_cliente.html)
     // ============================================================
     const GAS_URL = "https://script.google.com/macros/s/AKfycbzR_7OohAQ4ORv8XjoMbQtV3Z57S0DTMHKDYrAZUvw7xaFdsxT1Ce3fp8IEmfRHnZxL/exec";
-    const RUTA = "clientes_manual";     // misma ruta que la página interna
-    const ORIGEN = "apuntate_taller";   // para saber que viene del formulario público
+    const HOJA   = "clientes_manual";   // destino que espera Codigo.gs (campo _hoja)
+    const ORIGEN = "apuntate_taller";   // hoy Codigo.gs lo ignora, pero se envía por si un día lo guardas
     // ============================================================
 
     const form = document.getElementById('form');
@@ -410,24 +410,34 @@
         return;
       }
 
-      // recoger datos
+      // Recogemos por separado los campos que se fusionan (para no perder info)
+      const nombreVal    = document.getElementById('nombre').value.trim();
+      const apellidosVal = document.getElementById('apellidos').value.trim();
+      const direccionVal = document.getElementById('direccion').value.trim();
+      const cpVal        = document.getElementById('codigo_postal').value.trim();
+
       const data = {
-        ruta: RUTA,
-        origen: ORIGEN,
-        nombre: document.getElementById('nombre').value.trim(),
-        apellidos: document.getElementById('apellidos').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        telefono: document.getElementById('telefono').value.trim(),
+        // ── Contrato con Codigo.gs (nombres exactos que espera doPost) ──
+        _hoja:            HOJA,
+        timestamp:        new Date().toISOString(),
+        nombre:           [nombreVal, apellidosVal].filter(Boolean).join(' '),
+        genero:           document.getElementById('genero').value,
+        email:            document.getElementById('email').value.trim(),
+        telefono:         document.getElementById('telefono').value.trim(),
         fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
-        genero: document.getElementById('genero').value,
-        dni: document.getElementById('dni').value.trim().toUpperCase(),
-        direccion: document.getElementById('direccion').value.trim(),
-        codigo_postal: document.getElementById('codigo_postal').value.trim(),
-        ciudad: document.getElementById('ciudad').value.trim(),
-        provincia: document.getElementById('provincia').value.trim(),
-        pais: document.getElementById('pais').value.trim(),
-        consentimiento: true,
-        fecha_registro: new Date().toISOString()
+        dni:              document.getElementById('dni').value.trim().toUpperCase(),
+        direccion:        [direccionVal, cpVal].filter(Boolean).join(', '),
+        ciudad:           document.getElementById('ciudad').value.trim(),
+
+        // ── Campos extra: Codigo.gs los ignora hoy, pero llegan al script ──
+        // por si más adelante añades columnas Apellidos / CP / Provincia /
+        // País / Origen / Consentimiento a la hoja Clientes
+        apellidos:        apellidosVal,
+        codigo_postal:    cpVal,
+        provincia:        document.getElementById('provincia').value.trim(),
+        pais:             document.getElementById('pais').value.trim(),
+        origen:           ORIGEN,
+        consentimiento:   true
       };
 
       submitBtn.disabled = true;
