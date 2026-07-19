@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apúntate al taller · RINGANA</title>
+  <meta name="description" content="Reserva tu plaza en el taller de piel RINGANA: análisis personalizado y recomendación de rutina fresca.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f3;
+      --card: #ffffff;
+      --ink: #24241f;
+      --ink-soft: #6a6a63;
+      --line: #e6e0d2;
+      --line-soft: #f0ebdd;
+      --accent: #7a8f6a;
+      --accent-dark: #556b47;
+      --accent-soft: #eef0e6;
+      --error: #b3564c;
+      --focus: #a8b998;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-weight: 300;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    header.top {
+      text-align: center;
+      margin: 8px 0 28px;
+    }
+    .tag {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 40px;
+      line-height: 1.1;
+      margin: 0 0 10px;
+      color: var(--ink);
+    }
+    header.top p {
+      font-size: 15px;
+      color: var(--ink-soft);
+      margin: 0;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 26px 24px;
+      margin-bottom: 18px;
+    }
+    .intro p {
+      margin: 0 0 10px;
+      font-size: 15px;
+      color: var(--ink);
+    }
+    .intro p:last-child { margin-bottom: 0; }
+    .intro strong { font-weight: 500; color: var(--accent-dark); }
+    .section {
+      border-bottom: 1px solid var(--line-soft);
+      padding-bottom: 22px;
+      margin-bottom: 22px;
+    }
+    .section:last-of-type {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 22px;
+      margin: 0 0 4px;
+      color: var(--ink);
+    }
+    .section-note {
+      font-size: 13px;
+      color: var(--ink-soft);
+      margin: 0 0 16px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .row.single { grid-template-columns: 1fr; }
+    .row.two-thirds { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 480px) {
+      .row, .row.two-thirds { grid-template-columns: 1fr; }
+      h1 { font-size: 34px; }
+      .wrap { padding: 24px 16px 40px; }
+      .card { padding: 22px 18px; }
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+      font-weight: 500;
+      margin-bottom: 6px;
+      text-transform: none;
+    }
+    label .req { color: var(--accent-dark); margin-left: 2px; }
+    label .opt {
+      color: var(--ink-soft);
+      font-weight: 400;
+      font-size: 11px;
+      margin-left: 4px;
+      font-style: italic;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select {
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      color: var(--ink);
+      background: #fdfcf8;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 11px 12px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--focus);
+      background: #ffffff;
+    }
+    input.invalid, select.invalid { border-color: var(--error); }
+    .consent {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .consent input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: var(--accent-dark);
+      flex-shrink: 0;
+    }
+    .consent span { color: var(--ink); }
+    .consent .fine { color: var(--ink-soft); font-size: 12px; margin-top: 4px; display: block; }
+    button.submit {
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffffff;
+      background: var(--accent-dark);
+      border: none;
+      border-radius: 4px;
+      padding: 15px;
+      margin-top: 22px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button.submit:hover { background: #445a38; }
+    button.submit:disabled { background: #a8b998; cursor: not-allowed; }
+    .error-msg {
+      color: var(--error);
+      font-size: 13px;
+      margin-top: 14px;
+      text-align: center;
+    }
+    .success {
+      text-align: center;
+      padding: 40px 24px;
+    }
+    .success h2 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .success p {
+      color: var(--ink-soft);
+      font-size: 15px;
+      margin: 0 0 20px;
+      max-width: 380px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .success .again {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      color: var(--accent-dark);
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 10px 22px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .success .again:hover { background: var(--accent-soft); }
+    footer.foot {
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-soft);
+      margin-top: 32px;
+      letter-spacing: 0.04em;
+    }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="top">
+      <div class="tag">RINGANA · Taller de piel</div>
+      <h1>Apúntate al taller</h1>
+    </header>
+
+    <form class="card" id="form" novalidate>
+
+      <div class="section">
+        <h2>Tus datos</h2>
+        <p class="section-note">Para poder contactarte y prepararte el análisis.</p>
+
+        <div class="row">
+          <div>
+            <label for="nombre">Nombre <span class="req">*</span></label>
+            <input type="text" id="nombre" name="nombre" autocomplete="given-name" required>
+          </div>
+          <div>
+            <label for="apellidos">Apellidos <span class="req">*</span></label>
+            <input type="text" id="apellidos" name="apellidos" autocomplete="family-name" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="email">Email <span class="req">*</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+          </div>
+          <div>
+            <label for="telefono">Teléfono <span class="req">*</span></label>
+            <input type="tel" id="telefono" name="telefono" autocomplete="tel" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="fecha_nacimiento">Fecha de nacimiento <span class="opt">opcional</span></label>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+          </div>
+          <div>
+            <label for="genero">Género <span class="opt">opcional</span></label>
+            <select id="genero" name="genero">
+              <option value="">— Seleccionar —</option>
+              <option value="Mujer">Mujer</option>
+              <option value="Hombre">Hombre</option>
+              <option value="Otro">Prefiero no decir</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Dirección</h2>
+        <p class="section-note">Necesaria para registrarte como cliente RINGANA y poder enviarte los productos si decides pedir algo.</p>
+
+        <div class="row single">
+          <div>
+            <label for="dni">DNI / NIE <span class="req">*</span></label>
+            <input type="text" id="dni" name="dni" placeholder="Ej. 12345678A" autocomplete="off" required>
+          </div>
+        </div>
+
+        <div class="row single">
+          <div>
+            <label for="direccion">Dirección (calle, número, piso) <span class="req">*</span></label>
+            <input type="text" id="direccion" name="direccion" autocomplete="street-address" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="codigo_postal">Código postal <span class="req">*</span></label>
+            <input type="text" id="codigo_postal" name="codigo_postal" inputmode="numeric" autocomplete="postal-code" required>
+          </div>
+          <div>
+            <label for="ciudad">Ciudad <span class="req">*</span></label>
+            <input type="text" id="ciudad" name="ciudad" autocomplete="address-level2" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="provincia">Provincia <span class="opt">opcional</span></label>
+            <input type="text" id="provincia" name="provincia" autocomplete="address-level1">
+          </div>
+          <div>
+            <label for="pais">País</label>
+            <input type="text" id="pais" name="pais" value="España" autocomplete="country-name">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Protección de datos</h2>
+        <label class="consent">
+          <input type="checkbox" id="consentimiento" name="consentimiento" required>
+          <span>
+            Acepto que <strong>Regina Donat Ferri</strong>, como RINGANA Partner autónomo, trate mis datos para gestionar mi inscripción al taller y, en su caso, registrarme como cliente en RINGANA GmbH. Puedo ejercer mis derechos de acceso, rectificación y supresión escribiendo a <strong>donatferri@gmail.com</strong>.
+            <span class="fine">Tus datos no se comparten con terceros ajenos a RINGANA.</span>
+          </span>
+        </label>
+      </div>
+
+      <button type="submit" class="submit" id="submitBtn">Reservar mi plaza</button>
+      <div class="error-msg" id="errorMsg" hidden></div>
+    </form>
+
+    <section class="card success" id="successCard" hidden>
+      <h2>Gracias<span id="nombreOk"></span></h2>
+      <p>Te escribo pronto con la fecha del taller y todos los detalles. Nos vemos muy pronto.</p>
+      <button class="again" id="againBtn">Apuntar a otra persona</button>
+    </section>
+
+    <footer class="foot">
+      RINGANA Partner autónomo · Datos tratados de forma confidencial
+    </footer>
+
+  </div>
+
+  <script>
+    // ============================================================
+    // CONFIGURACIÓN — pega aquí la URL de tu Google Apps Script
+    // (la misma que usa añadir_cliente.html)
+    // ============================================================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzR_7OohAQ4ORv8XjoMbQtV3Z57S0DTMHKDYrAZUvw7xaFdsxT1Ce3fp8IEmfRHnZxL/exec";
+    const RUTA = "clientes_manual";     // misma ruta que la página interna
+    const ORIGEN = "apuntate_taller";   // para saber que viene del formulario público
+    // ============================================================
+
+    const form = document.getElementById('form');
+    const successCard = document.getElementById('successCard');
+    const nombreOk = document.getElementById('nombreOk');
+    const errorMsg = document.getElementById('errorMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    const againBtn = document.getElementById('againBtn');
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.hidden = false;
+    }
+    function clearError() {
+      errorMsg.hidden = true;
+      errorMsg.textContent = '';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+
+      // limpiar estado visual
+      form.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+
+      // validación
+      const requiredIds = ['nombre','apellidos','email','telefono','dni','direccion','codigo_postal','ciudad'];
+      let firstInvalid = null;
+      for (const id of requiredIds) {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) {
+          el.classList.add('invalid');
+          if (!firstInvalid) firstInvalid = el;
+        }
+      }
+      const consent = document.getElementById('consentimiento');
+      if (!consent.checked) {
+        if (!firstInvalid) firstInvalid = consent;
+      }
+      if (firstInvalid) {
+        showError('Revisa los campos marcados y el consentimiento.');
+        firstInvalid.focus();
+        return;
+      }
+
+      // recoger datos
+      const data = {
+        ruta: RUTA,
+        origen: ORIGEN,
+        nombre: document.getElementById('nombre').value.trim(),
+        apellidos: document.getElementById('apellidos').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+        genero: document.getElementById('genero').value,
+        dni: document.getElementById('dni').value.trim().toUpperCase(),
+        direccion: document.getElementById('direccion').value.trim(),
+        codigo_postal: document.getElementById('codigo_postal').value.trim(),
+        ciudad: document.getElementById('ciudad').value.trim(),
+        provincia: document.getElementById('provincia').value.trim(),
+        pais: document.getElementById('pais').value.trim(),
+        consentimiento: true,
+        fecha_registro: new Date().toISOString()
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando…';
+
+      try {
+        // Petición sin cabeceras custom para evitar preflight CORS con GAS
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify(data)
+        });
+
+        // Éxito
+        form.hidden = true;
+        nombreOk.textContent = data.nombre ? ', ' + data.nombre : '';
+        successCard.hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Reservar mi plaza';
+        showError('No se pudo enviar. Prueba de nuevo en un momento.');
+      }
+    });
+
+    againBtn.addEventListener('click', () => {
+      form.reset();
+      form.hidden = false;
+      successCard.hidden = true;
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Reservar mi plaza';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
